@@ -46,10 +46,10 @@ func parseArgs(args []string) ([]string, M) {
 func runCLI(args []string) any {
 	commands, o := parseArgs(args)
 	if len(commands) == 0 || truth(o["help"]) {
-		return M{"application": "japanese-speaking-coach", "version": version, "commands": stringsA("prepare --auto-scene --opening --with-project", "resume --compact --with-project", "lesson start|show|next|finish --expected-revision HASH [--input FILE]", "serve --workspace --port 8898", "service start|status|stop|resume", "doctor [--probe]", "paths", "init|rebuild|validate", "add-session|finish-review --input FILE", "review-begin|review-context --thread-id UUID --voice-id UUID", "set-preferences --input FILE --expected-profile-sha256 HASH", "checkpoint|recover|add-evidence|export", "live start|status|stop|resume|disable|probe", "recover-voice --thread-id UUID --voice-id UUID", "storage backup|inspect|restore|adopt|move|configure"), "runtime": "Standalone Go; no Python, Node.js or Go installation needed"}
+		return M{"application": "japanese-speaking-coach", "version": version, "commands": stringsA("prepare --auto-scene --opening --with-project", "resume --compact --with-project", "serve --workspace --port 8898", "service start|status|stop|resume", "doctor [--probe]", "paths", "init|rebuild|validate", "add-session|finish-review --input FILE", "review-begin|review-context --thread-id UUID --voice-id UUID", "set-preferences --input FILE --expected-profile-sha256 HASH", "checkpoint|recover|add-evidence|export", "live start|status|stop|resume|disable|probe", "recover-voice --thread-id UUID --voice-id UUID", "storage backup|inspect|restore|adopt|move|configure"), "runtime": "Standalone Go; no Python, Node.js or Go installation needed"}
 	}
 	cmd := commands[0]
-	require(has(stringsA("lesson", "version", "prepare", "paths", "serve", "service", "doctor", "open", "live", "review-begin", "review-context", "resume", "validate", "storage", "recover-voice", "init", "migrate", "rebuild", "render", "add-session", "finish-review", "set-preferences", "checkpoint", "recover", "add-evidence", "export"), cmd), "Unknown command: "+cmd)
+	require(has(stringsA("version", "prepare", "paths", "serve", "service", "doctor", "open", "live", "review-begin", "review-context", "resume", "validate", "storage", "recover-voice", "init", "migrate", "rebuild", "render", "add-session", "finish-review", "set-preferences", "checkpoint", "recover", "add-evidence", "export"), cmd), "Unknown command: "+cmd)
 	for flag, name := range map[string]string{"codex-home": "CODEX_HOME", "skill-root": "JAPANESE_COACH_SKILL_ROOT", "codex-executable": "JAPANESE_COACH_CODEX"} {
 		if value := str(o[flag]); value != "" {
 			must(os.Setenv(name, absolute(value)))
@@ -71,14 +71,6 @@ func runCLI(args []string) any {
 	source := str(o["source"])
 	day := textOr(o["today"], today())
 	checkDate(day)
-	if cmd == "lesson" {
-		ensureWorkspace(w)
-		action := "show"
-		if len(commands) > 1 {
-			action = commands[1]
-		}
-		return lessonCommand(root, day, action, o)
-	}
 	if cmd == "paths" {
 		return w
 	}

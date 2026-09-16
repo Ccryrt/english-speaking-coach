@@ -1,6 +1,6 @@
 ---
 name: english-speaking-coach
-description: Practice English or Japanese with a language selector, guided micro-lessons, bilingual captions and saved reviews. 日常、工作与面试口语；网页可选英语或日语，维护时不开始练习。
+description: Practice English or Japanese with a language selector, bilingual captions and saved reviews. 日常、工作与面试口语；网页可选英语或日语，维护时不开始练习。
 ---
 
 # 语言交流 / Language Exchange
@@ -11,9 +11,8 @@ This is one plugin with English and Japanese modes. For a new practice, run `sh 
 
 Pin the chosen language with `--language en` or `--language ja` on **every command for that practice**, including review and recovery. A browser language change applies to the next practice; it must not redirect a running Voice or its review into another archive. To change languages during an active Voice, ask the learner to finish that call and start another; do not silently bind the same Voice to both archives.
 
-- **Guided learning (either language):** for “带我学”, beginner teaching or the progress/help micro-lesson, read [Guided learning](references/guided-learning.md) first and use that route instead of the free-conversation teaching rules below. Models and brief Chinese help are allowed during teaching; independent tests withdraw answers.
-- **Japanese free conversation (`ja`):** read [Japanese practice](references/japanese.md) and follow it instead of the English teaching rules below. Japanese first, brief Chinese help when stuck, daily/work/interview scenes.
-- **English free conversation (`en`):** follow the original English rules below, unchanged.
+- **Japanese (`ja`):** read [Japanese practice](references/japanese.md) and follow it instead of the English teaching rules below. Japanese first, brief Chinese help when stuck, daily/work/interview scenes.
+- **English (`en`):** follow the original English rules below, unchanged.
 
 Use the returned page URL in the right panel. The page's “练习语言” selector changes the next practice preference and displays that language's records. One plugin, separate archives; never copy English records into Japanese or vice versa.
 

@@ -46,19 +46,17 @@ func chooseScene(root string, context M) M {
 	if preferred == "mixed" {
 		preferred = ""
 	}
-	scenes := A{}
-	for _, v := range arr(contracts["scenes"]) {
-		if preferred == "" || str(arr(v)[6]) == preferred {
-			scenes = append(scenes, v)
-		}
-	}
-	require(len(scenes) > 0, "No scenes for requested topic")
+	scenes := append(A{}, arr(contracts["scenes"])...)
 	score := func(v any) int {
 		x := arr(v)
 		family := str(x[0])
 		n := 0
 		if avoided[family] != nil {
 			n += 1000000
+		}
+		category := str(x[6])
+		if preferred != "" && category != preferred {
+			n += 100000
 		}
 		for i, v := range recent {
 			if familyNames(compact(v))[family] != nil {
@@ -100,9 +98,6 @@ func validateScene(scene M) {
 	}
 }
 func speakingContext(profile M, companion bool, phase string, scene M) M {
-	if phase == "guided" {
-		return M{"phase": "guided", "scene": nil, "startup": M{"scene_required": false}, "policy": M{"role": "coach", "response_language": "target_language_with_brief_chinese_help", "guided_learning": true, "mastery_from_repetition": false}}
-	}
 	if phase == "" {
 		phase = "scene"
 		if profile["mode"] == "focused" {
@@ -206,9 +201,6 @@ func resumeContext(root, day, phase string, scene M, topic string) M {
 	}
 	companion := companionPrefs(root)
 	context := speakingContext(profile, truth(companion["enabled"]), phase, scene)
-	if phase == "guided" {
-		context = merge(context, lessonContext(root, day))
-	}
 	latestContext := latest
 	if context["phase"] != "review" && latest != nil {
 		latestContext = pick(latest, "id", "date", "practiced_at", "scenarios", "topics", "progress", "evidence_status")
@@ -343,7 +335,7 @@ func preparePractice(args M) M {
 		binding = l.bind(thread, source, defaultCaptionModel, false)
 		newBinding = prior == nil || prior["id"] != binding["id"]
 		require(binding["voice_id"] == sourceState["voice_id"], "Voice 在准备期间已切换；Agent 需要重新核对当前场次。")
-		if str(args["scene"]) == "" && str(args["phase"]) != "guided" {
+		if str(args["scene"]) == "" {
 			if prior := sceneFor(root, str(binding["id"])); prior != nil {
 				scene = prior
 			}
@@ -408,16 +400,6 @@ func preparePractice(args M) M {
 		} else if scene == nil {
 			result["next_action"] = "Open url once; start one short Japanese conversation question suited to the saved goal."
 		}
-	}
-	if str(args["phase"]) == "guided" {
-		delete(result, "turn_guidance")
-		guide := lessonContext(root, today())
-		result = merge(result, guide)
-		if !truth(args["opening"]) {
-			result["context"] = merge(c, guide)
-		}
-		result["caption_url"] = result["url"]
-		result["url"] = strings.TrimRight(base, "/") + "/#guided"
 	}
 	prepared = true
 	return result

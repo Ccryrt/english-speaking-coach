@@ -1,7 +1,5 @@
 # Japanese practice / 日语练习
 
-For “引导学习” or “带我学日语”, use [Guided learning](guided-learning.md) instead of the free-scene startup below. The same source, archive and closeout boundaries still apply.
-
 ## Start the requested practice
 
 Run the bundled entry with `sh "<skill-root>/scripts/coach" --language ja` (PowerShell: `& "<skill-root>/scripts/coach.ps1" --language ja`). Use the existing English coach entry with `--language ja` on every command. On first use `coach init` initializes a separate Japanese archive. If it reports an existing unavailable archive, recover that location instead of creating a replacement. Commands below use `coach` as shorthand for the shared entry with `--language ja`.

@@ -42,18 +42,10 @@ function loadGoalInBackground() {
     overview=data;$('#goal').textContent=data.profile.goal;
   }).catch(()=>{}).finally(()=>{overviewLoading=null;});
 }
-function guidedEntry() {
-  return `<section class="panel" aria-label="学习方式"><h2>今天学两句</h2><p>说明正在做什么，再向同事请求帮助。</p><a class="button primary" href="#guided">引导学习</a><p class="fine">想自由对话？在左侧说「自由练日语」。</p></section>`;
-}
-function guidedPage(data) {
-  const names={new:'准备开始',demonstrate:'看一个示范',supported:'带提示练习',independent:'独立尝试',waiting:'本轮已记录',retest:'换情境复测'};
-  const support={none:'无提示',keyword:'有关键词提示',model:'看过或听过答案'};
-  return heading('GUIDED PRACTICE',data.title,data.goal)+`<section class="panel" id="guided-lesson" data-revision="${esc(data.revision)}" data-stage="${esc(data.stage)}"><h2>${esc(names[data.stage])}</h2><p>${esc(data.instruction)}</p>${(data.models||[]).map(m=>`<article><h3>${esc(m.text)}</h3><p>${esc(m.meaning)}</p>${m.reading?`<details><summary>假名读音</summary><p>${esc(m.reading)}</p></details>`:''}</article>`).join('')}${data.last_attempt?`<h3>这次尝试</h3>${data.last_attempt.responses.map(r=>`<p>${r.id==='progress'?'说明进度':'请求帮助'}：${esc(support[r.support])} · ${r.success?'完成表达':'还需练习'}</p>`).join('')}`:''}${data.next_review?`<p>下次复测：${esc(data.next_review)}</p>`:''}<p class="fine">在左侧说「${esc(data.prompt)}」${data.stage==='new'?'开始':'继续'}。这里会随教练的练习步骤更新。</p><p class="fine">提示减少不等于已经掌握；文字记录不评价发音或无字幕听力。</p><a class="text-link" href="#overview">回到学习首页</a></section>`;
-}
 function home(data) {
   const {latest, books} = data;
   const feature = latest?.excerpts?.find(e=>(latest.review_priority_ids||[]).includes(e.id)) || latest?.excerpts?.[0];
-  return guidedEntry() + `<section class="panel" aria-label="日语练习范围"><h2>今天想练什么？</h2><p>日常生活：点餐、购物、问路、旅行、预约与闲聊。</p><p>工作沟通：进度、需求、求助、延期与意见。</p><p>求职面试：自我介绍、项目经历、转职理由与反问。</p><p class="fine">在左侧告诉教练想练的场景，打开 Voice 开始。</p></section>` + heading('START HERE', '学习首页', '现在想练什么？先回顾一句，或回到最近一次练习。', '<a class="button" href="#stats">查看一段时间的变化 ↗</a>') +
+  return `<section class="panel" aria-label="日语练习范围"><h2>今天想练什么？</h2><p>日常生活：点餐、购物、问路、旅行、预约与闲聊。</p><p>工作沟通：进度、需求、求助、延期与意见。</p><p>求职面试：自我介绍、项目经历、转职理由与反问。</p><p class="fine">在左侧告诉教练想练的场景，打开 Voice 开始。</p></section>` + heading('START HERE', '学习首页', '现在想练什么？先回顾一句，或回到最近一次练习。', '<a class="button" href="#stats">查看一段时间的变化 ↗</a>') +
     `<section class="quick-review home-start"><div class="section-head"><div><h2>先花两分钟，试着说一句</h2><p>从到期表达中选几条；先看中文，再回想日文。</p></div><a class="button primary" href="${esc(href('terms',{mode:'speak',due:'1'}))}">开始回顾 ↗</a></div>${data.review_terms.map(t => `<a class="review-small" href="${esc(href('terms',{q:t.chinese,mode:'speak'}))}">${esc(t.chinese)}<span>${esc(t.book)} · ${esc(t.state_label)}</span></a>`).join('') || '<p class="fine">目前没有到期表达，可以到生词与表达里选一句回顾。</p>'}</section>` +
     (latest ? `<section class="hero" aria-label="最近一次练习"><div class="hero-quote"><span class="eyebrow">最近一次的表达 · ${esc(shortDate(latest.date))}</span><blockquote lang="ja">${esc(feature?.japanese || latest.title)}</blockquote><p>${esc(feature?.chinese || '')}</p></div><div class="hero-summary">${tag('最近一次 · ' + latest.book)}<h2>${esc(latest.title)}</h2><p>${esc(latest.summary)}</p><a class="button primary" href="${esc(href('sessions/' + latest.id))}">查看这次总结 ↗</a></div></section>` : empty('第一段练习，还在等你','对 Agent 说「练日语」，保存后这里就会出现你的第一篇记录。')) +
     `<div class="home-grid"><section><div class="section-head"><h2>最近聊过什么</h2><a class="text-link" href="#sessions">全部记录 ↗</a></div><div class="panel">${data.recent.map(s => `<a class="session-link" href="${esc(href('sessions/' + s.id))}">${sourceDate(s)}<div><h3>${esc(s.title)}</h3><p>${esc(s.book)} · ${s.card_count ?? s.expression_count} 张词语与表达卡</p></div><span class="arrow">↗</span></a>`).join('') || '<p class="muted">还没有课次记录。</p>'}</div></section><section><div class="section-head"><h2>按场景找表达</h2><a class="text-link" href="#terms">全部表达 ↗</a></div><div class="books">${books.map(b => `<a class="book" href="${esc(href('terms',{book:b.name}))}"><span class="book-en" lang="ja">${esc(bookJapanese[b.name] || b.name)}</span><h3>${esc(b.name)}</h3><p>${b.count} 条表达 · ${b.sessions} 次对话</p></a>`).join('')}</div><div class="practice-note"><strong>想开始下一场对话</strong><p>直接对 Agent 说「练日语」。AI 会参考学习记录选择新场景，介绍地点、角色和目标，再开始。</p>${latest?.next_focus?.length?`<p>上次建议继续练：${esc(latest.next_focus.join('；'))}</p>`:''}</div></section></div>`;
@@ -198,7 +190,7 @@ async function render() {
   window.CoachLive?.unmount();
   main.setAttribute('aria-busy','true');
   document.querySelectorAll('[data-nav]').forEach(el => { el.classList.toggle('active',el.dataset.nav===navSection); if(el.dataset.nav===navSection) el.setAttribute('aria-current','page');else el.removeAttribute('aria-current'); });
-  const names = {guided:'引导学习',live:'双语伴随',overview:'学习首页',review:'本次复盘',sessions:'对话记录',terms:'生词与表达',stats:'学习回顾',progress:'词句进展',storage:'本地学习数据'};
+  const names = {live:'双语伴随',overview:'学习首页',review:'本次复盘',sessions:'对话记录',terms:'生词与表达',stats:'学习回顾',progress:'词句进展',storage:'本地学习数据'};
   $('#breadcrumb').textContent = '我的学习 / '+(names[section]||'档案');
   try {
     // A saved lesson or live feed should not wait for an unrelated overview request.
@@ -217,7 +209,6 @@ async function render() {
         `<section id="review-preview" class="review-preview" aria-label="已可先看的表达建议" ${data.preview?.length?'':'hidden'}>${reviewPreview(data)}</section>`+
         `<section class="review-wait" role="status"><span class="review-indicator" aria-hidden="true"></span><h2 id="review-title">${reviewMessage(data).title}</h2><p id="review-state">${esc(reviewMessage(data).body)}</p><p class="fine">可以先看其他记录；页面上方会保留本次整理状态和返回入口。</p><button class="button" type="button" data-retry-review ${data.status==='error'?'':'hidden'}>重试本场复盘</button> <a class="button" href="#terms">先看全部词句</a></section>`;
     }
-    else if(path==='guided'){data=await api('api/lesson');markup=guidedPage(data);}
     else if(path==='overview'){data=await api('api/overview');overview=data;markup=home(data);}
     else if(path==='sessions'){data=await api('api/sessions',{...args,limit:10});markup=sessionsPage(data,args);}
     else if(path.startsWith('sessions/')){data=await api('api/'+path);markup=lessonPage(data);}
@@ -232,7 +223,7 @@ async function render() {
     main.innerHTML=markup;
     if(data.profile){overview=data;$('#goal').textContent=data.profile.goal;}
     else if(!overview)loadGoalInBackground();
-    if(path==='live')window.CoachLive.mount(data,args);else if(path==='guided'){$('#sync').textContent='练习步骤自动更新';$('#revision').textContent='本地微课';}else updateMeta(data);
+    if(path==='live')window.CoachLive.mount(data,args);else updateMeta(data);
     if(path==='storage')window.CoachStorage?.mount(data);
     paintReviewNotice();
     document.title=(names[section]||'我的学习')+' · 语言交流 · 日语';
@@ -317,10 +308,6 @@ async function refreshReviews() {
   reviewPolling=true;
   try {
     if(document.hidden)return;
-    if(route().path==='guided'){
-      const version=renderVersion,lesson=await api('api/lesson'),panel=$('#guided-lesson');
-      if(version===renderVersion&&route().path==='guided'&&panel&&(panel.dataset.revision!==lesson.revision||panel.dataset.stage!==lesson.stage))main.innerHTML=guidedPage(lesson);
-    }
     const data=await api('api/reviews');
     for(const item of data.items||[])rememberReview(item);
     const current=route();

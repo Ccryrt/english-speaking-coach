@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -271,22 +270,3 @@ type jsonHandler M
 
 func httpJSON(d M) jsonHandler                                         { return jsonHandler(d) }
 func (d jsonHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) { json.NewEncoder(w).Encode(d) }
-
-func TestRequestedTopicSurvivesRecentScenes(t *testing.T) {
-	for _, topic := range []string{"work", "interview"} {
-		root := testRoot(t)
-		for _, v := range arr(contracts["scenes"]) {
-			row := arr(v)
-			if row[6] == topic {
-				rememberScene(root, str(row[0]), M{"setting": row[1], "goal": row[4]})
-			}
-		}
-		for i := 0; i < 12; i++ {
-			scene := chooseScene(root, resumeContext(root, today(), "", nil, topic))
-			if scene["category"] != topic {
-				t.Fatalf("requested %s, selected %v", topic, scene)
-			}
-			rememberScene(root, fmt.Sprint("repeat-", i), scene)
-		}
-	}
-}
