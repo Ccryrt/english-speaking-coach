@@ -1,0 +1,39 @@
+/* One transcript scroll area; secondary controls are disclosed on demand. */
+body.live-view{height:100dvh;overflow:hidden}
+.live-view .sidebar,.live-view .topbar,.live-view footer,.live-view #review-notice{display:none}
+.live-view .workspace{margin:0;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+.live-view main{flex:1;min-height:0;display:flex;flex-direction:column;padding:8px;margin:0;max-width:none;width:auto;overflow:hidden}
+.live-panel{background:#fff;border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;flex:1;min-height:0}
+.live-toolbar,.live-info,.live-pager{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 12px;flex-shrink:0}
+.live-toolbar{border-bottom:1px solid var(--line);flex-wrap:wrap}
+.live-toolbar>div,.live-actions{display:flex;align-items:center;gap:8px}
+.live-toolbar strong{font-size:14px}.live-toggle{display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer;white-space:nowrap}
+.live-toggle input{width:16px;height:16px;accent-color:var(--blue)}
+.live-status{display:inline-flex;align-items:center;gap:6px;color:#237566;font-size:11px}
+.live-status:before{content:'';width:6px;height:6px;background:currentColor;border-radius:50%;flex-shrink:0}
+.live-status.live-error{color:#956137}.live-info{padding-top:5px;padding-bottom:5px;background:#fafbff;min-width:0}
+.live-info .fine{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.live-notice{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0;padding:5px 12px;background:#fff7eb;color:#826136;border-bottom:1px solid #e9d6b4;font-size:11px;line-height:1.5;flex-shrink:0}
+.live-notice[hidden]{display:none}.live-notice .button{flex-shrink:0}
+.live-feed{height:auto;min-height:0;flex:1;overflow:auto;overscroll-behavior:contain;overflow-anchor:none;padding:8px 12px;scrollbar-gutter:stable}
+.live-utterance{max-width:96%;padding:9px 12px;margin:0 0 9px;border-radius:9px;border:1px solid #e3eaf6;background:#f8faff;overflow-wrap:anywhere}
+.live-user{margin-left:auto;background:#edf4ff;border-color:#dce8fc}
+.live-speaker{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#7288a8;font-size:10px;font-weight:600}
+.live-speaker time{font-weight:400;font-variant-numeric:tabular-nums}
+.live-japanese{font:20px/1.5 var(--body);color:#234b7c;margin:5px 0}
+.live-translation,.live-answer p{color:#51698a;line-height:1.6;margin:4px 0 0;font-size:14px}
+.live-pending{color:#8898b2;font-size:11px;margin:3px 0 0}
+.live-answer summary{font-size:12px;color:#3969ae;cursor:pointer}
+.live-pager{border-top:1px solid var(--line);justify-content:flex-start;flex-wrap:wrap;padding:6px 10px;gap:6px}
+.live-pager .button{font-size:11px;padding:4px 8px;min-height:30px}.live-pager .primary{margin-left:auto}.live-pager .fine{font-size:11px}
+.live-empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px}
+.live-empty>span{font:40px Georgia;color:#b9cae9}.live-empty h2{font-size:19px;color:#365681;margin:12px 0 4px}.live-empty p{max-width:520px;font-size:13px;line-height:1.8;color:#7588a6}
+.live-details{position:relative;font-size:12px}
+.live-details>summary{cursor:pointer;padding:5px 8px;color:var(--muted)}
+.live-options{position:absolute;z-index:20;top:36px;right:0;width:330px;max-width:calc(100vw - 32px);max-height:calc(100dvh - 100px);overflow:auto;padding:16px;background:white;border:1px solid var(--line);border-radius:9px;box-shadow:0 8px 30px #15264820}
+.live-options h2{font-size:12px;margin:15px 0 5px}.live-options p{font-size:12px;color:var(--muted);line-height:1.7;overflow-wrap:anywhere}
+.live-options label{display:grid;gap:6px}.live-options select{width:100%;min-width:0;background:white;border:1px solid var(--line);border-radius:6px;padding:7px;color:var(--ink)}
+.live-links{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}.live-links button{padding:0;color:var(--blue)}
+.live-options>details{margin-top:14px}.live-options summary{cursor:pointer;color:var(--muted)}
+.live-fragment{font-size:12px;color:#676350;line-height:1.6;background:#f6f4ed;padding:5px 8px;border-radius:5px}
+@media(max-width:420px){.live-view main{padding:4px}.live-toolbar,.live-info{padding-left:8px;padding-right:8px}.live-toolbar>div{gap:5px}.live-toolbar #live-count{display:none}.live-japanese{font-size:19px}.live-feed{padding:7px}.live-pager{gap:4px;padding:5px 6px}.live-pager .fine{font-size:10px}.live-pager .button{padding:4px 6px;font-size:10px}}
