@@ -1,13 +1,13 @@
 {
   "name": "english-speaking-coach",
   "version": "1.0.2",
-  "description": "English and Japanese speaking practice with a language selector, bilingual captions and review cards.",
+  "description": "语言交流：英语与日语口语练习、双语字幕和复习卡片。",
   "author": {
     "name": "yomage-ai"
   },
   "skills": "./skills/",
   "interface": {
-    "displayName": "English Speaking Coach · 英语 / 日语",
+    "displayName": "语言交流",
     "shortDescription": "英语与日语口语练习、双语字幕与复习卡片",
     "longDescription": "Choose English or Japanese in one coach and one learning page. 日常生活、工作沟通与面试练习，分别保存两种语言的学习记录。",
     "developerName": "yomage-ai",

@@ -1,4 +1,4 @@
-# English Speaking Coach — English and Japanese
+# 语言交流 / Language Exchange
 
 This branch adds a Japanese option to the existing English coach. Use the **Practice language / 练习语言** selector on the shared learning page at http://127.0.0.1:8897/. The one `$english-speaking-coach` skill reads the saved selection; explicit language requests override it. English teaching rules remain unchanged.
 

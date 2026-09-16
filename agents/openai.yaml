@@ -1,5 +1,5 @@
 interface:
-  display_name: "English Speaking Coach / 英语与日语口语"
+  display_name: "语言交流"
   short_description: "在同一个教练中选择英语或日语，练习日常、工作与面试，查看双语字幕和复习记录"
   default_prompt: "Use $english-speaking-coach to practice the language selected on my learning page."
 policy:

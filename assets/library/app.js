@@ -222,7 +222,7 @@ async function render() {
     if(path==='live')window.CoachLive.mount(data,args);else updateMeta(data);
     if(path==='storage')window.CoachStorage?.mount(data);
     paintReviewNotice();
-    document.title=(names[section]||'我的学习')+' · 英语学习档案';
+    document.title=(names[section]||'我的学习')+' · 语言交流 · 英语';
     window.scrollTo({top:0,behavior:'instant'});
   } catch(error) {
     if(version!==renderVersion)return;

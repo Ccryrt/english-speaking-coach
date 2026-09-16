@@ -3,7 +3,7 @@ name: english-speaking-coach
 description: Practice English or Japanese with a language selector, bilingual captions and saved reviews. 日常、工作与面试口语；网页可选英语或日语，维护时不开始练习。
 ---
 
-# English Speaking Coach / 英语口语教练
+# 语言交流 / Language Exchange
 
 ## Select the practice language first
 

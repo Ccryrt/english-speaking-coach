@@ -1,4 +1,4 @@
-# English Speaking Coach · 英语 / 日语
+# 语言交流 / Language Exchange
 
 一个 Codex 插件、一张学习网页。在侧栏“练习语言”选择英语或日语，之后对 Codex 说“带我练口语”。也可直接说“练英语”或“练日语面试”，明确请求优先。
 
