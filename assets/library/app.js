@@ -42,18 +42,10 @@ function loadGoalInBackground() {
     overview=data;$('#goal').textContent=data.profile.goal;
   }).catch(()=>{}).finally(()=>{overviewLoading=null;});
 }
-function guidedEntry() {
-  return `<section class="panel" aria-label="学习方式"><h2>今天学两句</h2><p>说明正在做什么，再向同事请求帮助。</p><a class="button primary" href="#guided">引导学习</a><p class="fine">想自由对话？在左侧说「自由练英语」。</p></section>`;
-}
-function guidedPage(data) {
-  const names={new:'准备开始',demonstrate:'看一个示范',supported:'带提示练习',independent:'独立尝试',waiting:'本轮已记录',retest:'换情境复测'};
-  const support={none:'无提示',keyword:'有关键词提示',model:'看过或听过答案'};
-  return heading('GUIDED PRACTICE',data.title,data.goal)+`<section class="panel" id="guided-lesson" data-revision="${esc(data.revision)}" data-stage="${esc(data.stage)}"><h2>${esc(names[data.stage])}</h2><p>${esc(data.instruction)}</p>${(data.models||[]).map(m=>`<article><h3>${esc(m.text)}</h3><p>${esc(m.meaning)}</p>${m.reading?`<details><summary>假名读音</summary><p>${esc(m.reading)}</p></details>`:''}</article>`).join('')}${data.last_attempt?`<h3>这次尝试</h3>${data.last_attempt.responses.map(r=>`<p>${r.id==='progress'?'说明进度':'请求帮助'}：${esc(support[r.support])} · ${r.success?'完成表达':'还需练习'}</p>`).join('')}`:''}${data.next_review?`<p>下次复测：${esc(data.next_review)}</p>`:''}<p class="fine">在左侧说「${esc(data.prompt)}」${data.stage==='new'?'开始':'继续'}。这里会随教练的练习步骤更新。</p><p class="fine">提示减少不等于已经掌握；文字记录不评价发音或无字幕听力。</p><a class="text-link" href="#overview">回到学习首页</a></section>`;
-}
 function home(data) {
   const {latest, books} = data;
   const feature = latest?.excerpts?.find(e=>(latest.review_priority_ids||[]).includes(e.id)) || latest?.excerpts?.[0];
-  return guidedEntry() + heading('START HERE', '学习首页', '现在想练什么？先回顾一句，或回到最近一次练习。', '<a class="button" href="#stats">查看一段时间的变化 ↗</a>') +
+  return heading('START HERE', '学习首页', '现在想练什么？先回顾一句，或回到最近一次练习。', '<a class="button" href="#stats">查看一段时间的变化 ↗</a>') +
     `<section class="quick-review home-start"><div class="section-head"><div><h2>先花两分钟，试着说一句</h2><p>从到期表达中选几条；先看中文，再回想英文。</p></div><a class="button primary" href="${esc(href('terms',{mode:'speak',due:'1'}))}">开始回顾 ↗</a></div>${data.review_terms.map(t => `<a class="review-small" href="${esc(href('terms',{q:t.chinese,mode:'speak'}))}">${esc(t.chinese)}<span>${esc(t.book)} · ${esc(t.state_label)}</span></a>`).join('') || '<p class="fine">目前没有到期表达，可以到生词与表达里选一句回顾。</p>'}</section>` +
     (latest ? `<section class="hero" aria-label="最近一次练习"><div class="hero-quote"><span class="eyebrow">最近一次的表达 · ${esc(shortDate(latest.date))}</span><blockquote lang="en">${esc(feature?.english || latest.title)}</blockquote><p>${esc(feature?.chinese || '')}</p></div><div class="hero-summary">${tag('最近一次 · ' + latest.book)}<h2>${esc(latest.title)}</h2><p>${esc(latest.summary)}</p><a class="button primary" href="${esc(href('sessions/' + latest.id))}">查看这次总结 ↗</a></div></section>` : empty('第一段练习，还在等你','对 Agent 说「练英语」，保存后这里就会出现你的第一篇记录。')) +
     `<div class="home-grid"><section><div class="section-head"><h2>最近聊过什么</h2><a class="text-link" href="#sessions">全部记录 ↗</a></div><div class="panel">${data.recent.map(s => `<a class="session-link" href="${esc(href('sessions/' + s.id))}">${sourceDate(s)}<div><h3>${esc(s.title)}</h3><p>${esc(s.book)} · ${s.card_count ?? s.expression_count} 张词语与表达卡</p></div><span class="arrow">↗</span></a>`).join('') || '<p class="muted">还没有课次记录。</p>'}</div></section><section><div class="section-head"><h2>按生活主题找表达</h2><a class="text-link" href="#terms">全部表达 ↗</a></div><div class="books">${books.map(b => `<a class="book" href="${esc(href('terms',{book:b.name}))}"><span class="book-en" lang="en">${esc(bookEnglish[b.name] || b.name)}</span><h3>${esc(b.name)}</h3><p>${b.count} 条表达 · ${b.sessions} 次对话</p></a>`).join('')}</div><div class="practice-note"><strong>想开始下一场对话</strong><p>直接对 Agent 说「练英语」。AI 会参考学习记录选择新场景，介绍地点、角色和目标，再开始。</p>${latest?.next_focus?.length?`<p>上次建议继续练：${esc(latest.next_focus.join('；'))}</p>`:''}</div></section></div>`;
@@ -128,7 +120,7 @@ function datesBefore(end, n) {
   return result;
 }
 function storagePage(data) {
-  return heading('YOUR LOCAL DATA','本地学习数据','学习档案属于你；网页从下面这个目录读取，Skill 提供规则和程序。')+`<section class="storage-current"><span class="eyebrow">当前学习目录</span><h2>${esc(data.location)}</h2><code id="learning-data-path">${esc(data.data_root)}</code><div class="storage-actions"><button class="button primary" type="button" data-open-folder>打开学习目录 ↗</button><button class="button" type="button" data-copy-path>复制目录路径</button></div><p>打开后可直接查看课次和数据文件；浏览和翻卡不会改变学习表现。</p>${data.embedded?'<p>这是旧版存储位置。升级或卸载前应保留数据；可让 Agent 帮你迁到独立目录。</p>':''}</section>${window.CoachStorage?.shell(data)||''}<div class="storage-grid"><section class="panel"><h2>Skill：可分享的框架</h2><p>情景与教学规则、保存和读取工具、网页样式和闪卡交互，以及通用教学示例与测试。</p><code>${esc(data.skill_root)}</code><p class="fine">你的档案和本机路径配置不属于开源包。打包发布时仍需检查实际内容。</p></section><section class="panel"><h2>学习目录：你的私人记录</h2><dl><dt>Sessions · Evidence · Archive</dt><dd>课次、精选原话与学习证据</dd><dt>profile.json</dt><dd>学习目标和练习偏好</dd><dt>Pending · Runtime</dt><dd>未完成保存与练习运行状态</dd><dt>Live/companion.sqlite3</dt><dd>近期双语转写和翻译缓存（SQLite）</dd><dt>state.json · INDEX.md</dt><dd>可由原记录重新生成的索引</dd></dl><p class="fine">长期学习记录是 Markdown 文件，内部含 JSON 数据块；保存精选片段，不是完整聊天。Codex 自身聊天记录和录屏另有存放位置。</p></section></div><section class="panel storage-options"><h2>保存和迁移</h2><div><strong>新用户默认存放在 Skill 外</strong><p>Agent 自动初始化独立目录，不需要先安装 Obsidian。已有配置继续使用，不会换成空档案。</p><code>${esc(data.default_data_root)}</code></div><div><strong>不同窗口使用同一份档案</strong><p>本机配置记录当前数据路径；路径不可用时先恢复连接，不另建空记录。</p><code>${esc(data.config_path)}</code></div><div><strong>换电脑或换知识库</strong><p>在上方下载完整备份；新电脑安装同一 Skill 后，用“恢复备份”选择空目录，或直接使用已复制的学习目录。连接上方的同步文件夹后，可在练习前检查更新、保存后自动同步。</p></div><div><strong>本地保存 ≠ 全程离线</strong><p>学习档案保存在本机；AI 对话和翻译仍使用所连接的模型服务。</p></div></section>`;
+  return heading('YOUR LOCAL DATA','本地学习数据','学习档案属于你；网页从下面这个目录读取，Skill 提供规则和程序。')+`<section class="storage-current"><span class="eyebrow">当前学习目录</span><h2>${esc(data.location)}</h2><code id="learning-data-path">${esc(data.data_root)}</code><div class="storage-actions"><button class="button primary" type="button" data-open-folder>打开学习目录 ↗</button><button class="button" type="button" data-copy-path>复制目录路径</button></div><p>打开后可直接查看课次和数据文件；浏览和翻卡不会改变学习表现。</p>${data.embedded?'<p>这是旧版存储位置。升级或卸载前应保留数据；可让 Agent 帮你迁到独立目录。</p>':''}</section>${window.CoachStorage?.shell(data)||''}<div class="storage-grid"><section class="panel"><h2>Skill：可分享的框架</h2><p>情景与教学规则、保存和读取工具、网页样式和闪卡交互，以及通用教学示例与测试。</p><code>${esc(data.skill_root)}</code><p class="fine">你的档案和本机路径配置不属于开源包。打包发布时仍需检查实际内容。</p></section><section class="panel"><h2>学习目录：你的私人记录</h2><dl><dt>Sessions · Evidence · Archive</dt><dd>课次、精选原话与学习证据</dd><dt>profile.json</dt><dd>学习目标和练习偏好</dd><dt>Pending · Runtime</dt><dd>未完成保存与练习运行状态</dd><dt>Live/companion.sqlite3</dt><dd>近期双语转写和翻译缓存（SQLite）</dd><dt>state.json · INDEX.md</dt><dd>可由原记录重新生成的索引</dd></dl><p class="fine">长期学习记录是 Markdown 文件，内部含 JSON 数据块；保存精选片段，不是完整聊天。Codex 自身聊天记录和录屏另有存放位置。</p></section></div><section class="panel storage-options"><h2>保存和迁移</h2><div><strong>新用户默认存放在 Skill 外</strong><p>Agent 自动初始化独立目录，不需要先安装 Obsidian。已有配置继续使用，不会换成空档案。</p><code>${esc(data.default_data_root)}</code></div><div><strong>不同窗口使用同一份档案</strong><p>本机配置记录当前数据路径；路径不可用时先恢复连接，不另建空记录。</p><code>${esc(data.config_path)}</code></div><div><strong>换电脑或换知识库</strong><p>在上方下载完整备份；新电脑安装同一 Skill 后，用“恢复备份”选择空目录，或直接使用已复制的学习目录。不会自动云同步。</p></div><div><strong>本地保存 ≠ 全程离线</strong><p>学习档案保存在本机；AI 对话和翻译仍使用所连接的模型服务。</p></div></section>`;
 }
 async function openLearningFolder(button) {
   if(button.disabled)return;
@@ -194,7 +186,7 @@ async function render() {
   window.CoachLive?.unmount();
   main.setAttribute('aria-busy','true');
   document.querySelectorAll('[data-nav]').forEach(el => { el.classList.toggle('active',el.dataset.nav===navSection); if(el.dataset.nav===navSection) el.setAttribute('aria-current','page');else el.removeAttribute('aria-current'); });
-  const names = {guided:'引导学习',live:'双语伴随',overview:'学习首页',review:'本次复盘',sessions:'对话记录',terms:'生词与表达',stats:'学习回顾',progress:'词句进展',storage:'本地学习数据'};
+  const names = {live:'双语伴随',overview:'学习首页',review:'本次复盘',sessions:'对话记录',terms:'生词与表达',stats:'学习回顾',progress:'词句进展',storage:'本地学习数据'};
   $('#breadcrumb').textContent = '我的学习 / '+(names[section]||'档案');
   try {
     // A saved lesson or live feed should not wait for an unrelated overview request.
@@ -213,7 +205,6 @@ async function render() {
         `<section id="review-preview" class="review-preview" aria-label="已可先看的表达建议" ${data.preview?.length?'':'hidden'}>${reviewPreview(data)}</section>`+
         `<section class="review-wait" role="status"><span class="review-indicator" aria-hidden="true"></span><h2 id="review-title">${reviewMessage(data).title}</h2><p id="review-state">${esc(reviewMessage(data).body)}</p><p class="fine">可以先看其他记录；页面上方会保留本次整理状态和返回入口。</p><button class="button" type="button" data-retry-review ${data.status==='error'?'':'hidden'}>重试本场复盘</button> <a class="button" href="#terms">先看全部词句</a></section>`;
     }
-    else if(path==='guided'){data=await api('api/lesson');markup=guidedPage(data);}
     else if(path==='overview'){data=await api('api/overview');overview=data;markup=home(data);}
     else if(path==='sessions'){data=await api('api/sessions',{...args,limit:10});markup=sessionsPage(data,args);}
     else if(path.startsWith('sessions/')){data=await api('api/'+path);markup=lessonPage(data);}
@@ -228,7 +219,7 @@ async function render() {
     main.innerHTML=markup;
     if(data.profile){overview=data;$('#goal').textContent=data.profile.goal;}
     else if(!overview)loadGoalInBackground();
-    if(path==='live')window.CoachLive.mount(data,args);else if(path==='guided'){$('#sync').textContent='练习步骤自动更新';$('#revision').textContent='本地微课';}else updateMeta(data);
+    if(path==='live')window.CoachLive.mount(data,args);else updateMeta(data);
     if(path==='storage')window.CoachStorage?.mount(data);
     paintReviewNotice();
     document.title=(names[section]||'我的学习')+' · 语言交流 · 英语';
@@ -313,10 +304,6 @@ async function refreshReviews() {
   reviewPolling=true;
   try {
     if(document.hidden)return;
-    if(route().path==='guided'){
-      const version=renderVersion,lesson=await api('api/lesson'),panel=$('#guided-lesson');
-      if(version===renderVersion&&route().path==='guided'&&panel&&(panel.dataset.revision!==lesson.revision||panel.dataset.stage!==lesson.stage))main.innerHTML=guidedPage(lesson);
-    }
     const data=await api('api/reviews');
     for(const item of data.items||[])rememberReview(item);
     const current=route();

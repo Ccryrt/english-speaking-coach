@@ -19,10 +19,9 @@ const maxFiles = 20000
 // Run after releasing the writer lock. Preserve the legacy automatic-backup
 // scope; explicit external archives keep their existing backup policy.
 func recoveryBackup(root string) M {
-	synced := syncAfterSave(root)
 	legacySkillData := exists(filepath.Join(skillRoot(), "SKILL.md")) && within(root, skillRoot())
 	if absolute(root) != absolute(defaultRoot()) && !legacySkillData {
-		return synced
+		return M{}
 	}
 	destination := filepath.Join(filepath.Dir(configPath()), "backups", "latest.zip")
 	err := attempt(func() {
@@ -32,9 +31,9 @@ func recoveryBackup(root string) M {
 		})
 	})
 	if err != nil {
-		return merge(synced, M{"backup_warning": "学习原件已保存，但恢复备份未更新：" + err.Error()})
+		return M{"backup_warning": "学习原件已保存，但恢复备份未更新：" + err.Error()}
 	}
-	return merge(synced, M{"recovery_backup": destination})
+	return M{"recovery_backup": destination}
 }
 
 func assertIdle(root string) {
@@ -325,7 +324,7 @@ func (s *Server) storageInfo() M {
 	if absolute(str(w["data_root"])) == s.archive.root {
 		project = w["project_page"]
 	}
-	return M{"sync": syncInfo(s.archive.root), "data_root": s.archive.root, "skill_root": skillRoot(), "viewer_root": "embedded://assets/library", "config_path": configPath(), "default_data_root": defaultRoot(), "backup_path": filepath.Join(filepath.Dir(configPath()), "backups", "latest.zip"), "embedded": within(s.archive.root, skillRoot()), "location": "独立的本地学习目录", "project_page": project, "open_token": s.archive.token, "can_switch": s.managed, "available": exists(filepath.Join(s.archive.root, "profile.json")), "transfer_limit_bytes": maxBackup}
+	return M{"data_root": s.archive.root, "skill_root": skillRoot(), "viewer_root": "embedded://assets/library", "config_path": configPath(), "default_data_root": defaultRoot(), "backup_path": filepath.Join(filepath.Dir(configPath()), "backups", "latest.zip"), "embedded": within(s.archive.root, skillRoot()), "location": "独立的本地学习目录", "project_page": project, "open_token": s.archive.token, "can_switch": s.managed, "available": exists(filepath.Join(s.archive.root, "profile.json")), "transfer_limit_bytes": maxBackup}
 }
 func (s *Server) previewStorage(body M) M {
 	require(s.managed, "这是绑定单个目录的预览服务，请使用工作区服务迁移。")

@@ -84,7 +84,6 @@ func (s *Server) serveEnglish(w http.ResponseWriter, r *http.Request) {
 			sendJSON(w, r, 400, M{"error": fmt.Sprint(v)})
 		}
 	}()
-	s.refreshConfiguredArchive()
 	allowed := r.Host == fmt.Sprintf("127.0.0.1:%d", s.port) || r.Host == fmt.Sprintf("localhost:%d", s.port)
 	if !allowed {
 		sendJSON(w, r, 403, M{"error": "仅可从本机学习网页访问。"})
@@ -109,15 +108,6 @@ func (s *Server) serveEnglish(w http.ResponseWriter, r *http.Request) {
 		must(json.Unmarshal(bodyBytes, &body))
 		require(body != nil, "无效的本地操作内容。")
 		switch r.URL.Path {
-		case "/api/sync":
-			for k := range body {
-				require(has(stringsA("action", "directory", "choose"), k), "无效的同步参数。")
-			}
-			action := str(body["action"])
-			require(has(stringsA("connect", "now", "resolve", "disconnect"), action), "无效的同步操作。")
-			result := syncRun(s.archive.root, action, str(body["directory"]), str(body["choose"]))
-			s.refreshConfiguredArchive()
-			sendJSON(w, r, 200, result)
 		case "/api/storage/open":
 			require(len(body) == 0, "只能打开当前学习目录。")
 			openDirectory(s.archive.root)
@@ -243,21 +233,4 @@ func serve(ctx context.Context, root string, port int, managed bool) {
 	if e != http.ErrServerClosed {
 		must(e)
 	}
-}
-
-// A CLI sync uses the same checked directory switch as webpage migration.
-func (s *Server) refreshConfiguredArchive() {
-	if !s.managed {
-		return
-	}
-	target := str(workspace("")["data_root"])
-	if target == s.archive.root || syncConfig()["root"] != target {
-		return
-	}
-	assertIdle(s.archive.root)
-	archiveCounts(target)
-	s.stopBackground()
-	s.archive = newArchive(target)
-	s.plans = map[string]*TransferPlan{}
-	s.startBackground()
 }

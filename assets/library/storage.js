@@ -1,11 +1,7 @@
 (() => {
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  function syncSection(data) {
-    const state=data.sync||{}, labels={pending:'本地已保存，同步待重试',published:'已写入同步文件夹，等待 iCloud 传输',restored:'已从同步文件夹恢复学习进度',up_to_date:'与本机可见的同步版本一致',conflict:'两台设备都有新进度，双方版本已保留，请告诉教练处理',remote_available:'发现其他设备的新进度',resolved:'已采用选定进度，旧版本仍保留'};
-    return `<section class="panel"><h2>换电脑继续学习</h2><p>使用同一个 iCloud Drive 文件夹，保存后自动备份，练习前检查更新。英语和日语分别连接、分别保存。</p><form id="sync-form"><label for="sync-directory">学习同步文件夹</label><input id="sync-directory" type="text" required value="${esc(state.directory||state.suggested_directory||'')}" placeholder="选择已下载到本机的同步文件夹路径"><button type="submit" class="button primary">${state.enabled?'重新连接':'连接并恢复已有进度'}</button></form>${state.enabled?'<button id="sync-now" type="button" class="button">检查并同步</button> <button id="sync-disconnect" type="button" class="button">停止同步</button>':''}<p id="sync-result" role="status">${esc(state.enabled?(labels[state.last_result]||'已连接'):'尚未连接')}${state.last_error?'：'+esc(state.last_error):''}</p><p class="fine">${esc(state.message||'同步前请确认文件夹已下载。')}旧版本保留，设备进度冲突时不会自动覆盖。</p></section>`;
-  }
   function shell(data) {
-    return syncSection(data) + `<section class="panel storage-transfer"><h2>备份、换电脑与更换目录</h2>
+    return `<section class="panel storage-transfer"><h2>备份、换电脑与更换目录</h2>
       <p>完整备份包含课次、学习证据、偏好、未完成记录和关联项目页。AI 服务仍需联网；这个文件保存的是你的学习档案。</p>
       <div class="storage-actions"><label><input id="backup-live" type="checkbox"> 也保留近期双语转写缓存</label><button class="button" id="download-backup" type="button" ${data.available===false?'disabled':''}>下载完整备份 ZIP</button></div>
       <p class="fine">默认不带完整聊天缓存。Codex 自身聊天记录、录屏、账号和 Skill 程序不在备份里。</p>
@@ -42,17 +38,6 @@
       try{await work();}catch(error){status.textContent=error.message;}
       finally{button.disabled=false;}
     }
-    async function syncAction(action,button) {
-      const result=q('#sync-result');button.disabled=true;result.textContent='正在检查学习版本…';
-      try {
-        const response=await post('api/sync',{action,...(action==='connect'?{directory:q('#sync-directory').value.trim()}:{})});
-        result.textContent=response.message;
-        if(response.status!=='conflict')location.reload();
-      } catch(error){result.textContent=error.message;}finally{button.disabled=false;}
-    }
-    q('#sync-form').addEventListener('submit',event=>{event.preventDefault();syncAction('connect',event.currentTarget.querySelector('button'));});
-    q('#sync-now')?.addEventListener('click',event=>syncAction('now',event.currentTarget));
-    q('#sync-disconnect')?.addEventListener('click',event=>syncAction('disconnect',event.currentTarget));
     q('#download-backup').addEventListener('click',e=>run(e.currentTarget,async()=>{
       const blob=await post('api/storage/backup',{include_live:q('#backup-live').checked},true);
       const url=URL.createObjectURL(blob),a=document.createElement('a');

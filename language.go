@@ -77,7 +77,7 @@ func withoutLanguage(args []string) []string {
 	return out
 }
 func languageURLs(result M, from, to string) M {
-	for _, key := range []string{"url", "review_url", "caption_url"} {
+	for _, key := range []string{"url", "review_url"} {
 		if address := str(result[key]); strings.HasPrefix(address, from+"/") {
 			result[key] = to + strings.TrimPrefix(address, from)
 		}
