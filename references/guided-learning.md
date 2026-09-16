@@ -8,7 +8,7 @@ The first lesson has one Can-do and two expressions: describe current work and a
 
 `coach` below means `sh "<skill-root>/scripts/coach" --language en|ja` with the chosen language.
 
-1. If sync is connected, run `coach sync now` first; resolve any reported conflict before starting. Then `coach lesson show` returns `stage` and `revision`. `coach lesson start --expected-revision <revision>` starts a new lesson or resumes existing progress without erasing it. Never advance simply because the page opened.
+1. `coach lesson show` returns `stage` and `revision`. `coach lesson start --expected-revision <revision>` starts a new lesson or resumes existing progress without erasing it. Never advance simply because the page opened.
 2. Text: `coach resume --phase guided`, then `coach open --page guided --no-browser`. Active Voice: `coach prepare --phase guided --opening --with-project`. Preparation must verify the actual Voice before claiming it is ready; retain `review_url` and `caption_url`. Use the returned `url` for the right panel. It shows the lesson, while captions remain at `caption_url`. No Voice means text practice only; do not create a fake binding.
 3. Follow the saved stage. On later turns read `lesson show`; it restores progress and automatically returns `retest` when due. Never use free-scene setup or its English-only `turn_guidance` in this route.
 

@@ -46,10 +46,10 @@ func parseArgs(args []string) ([]string, M) {
 func runCLI(args []string) any {
 	commands, o := parseArgs(args)
 	if len(commands) == 0 || truth(o["help"]) {
-		return M{"application": "japanese-speaking-coach", "version": version, "commands": stringsA("prepare --auto-scene --opening --with-project", "resume --compact --with-project", "lesson start|show|next|finish --expected-revision HASH [--input FILE]", "sync status|connect|now|resolve|disconnect [--directory PATH] [--choose VERSION]", "serve --workspace --port 8898", "service start|status|stop|resume", "doctor [--probe]", "paths", "init|rebuild|validate", "add-session|finish-review --input FILE", "review-begin|review-context --thread-id UUID --voice-id UUID", "set-preferences --input FILE --expected-profile-sha256 HASH", "checkpoint|recover|add-evidence|export", "live start|status|stop|resume|disable|probe", "recover-voice --thread-id UUID --voice-id UUID", "storage backup|inspect|restore|adopt|move|configure"), "runtime": "Standalone Go; no Python, Node.js or Go installation needed"}
+		return M{"application": "japanese-speaking-coach", "version": version, "commands": stringsA("prepare --auto-scene --opening --with-project", "resume --compact --with-project", "lesson start|show|next|finish --expected-revision HASH [--input FILE]", "serve --workspace --port 8898", "service start|status|stop|resume", "doctor [--probe]", "paths", "init|rebuild|validate", "add-session|finish-review --input FILE", "review-begin|review-context --thread-id UUID --voice-id UUID", "set-preferences --input FILE --expected-profile-sha256 HASH", "checkpoint|recover|add-evidence|export", "live start|status|stop|resume|disable|probe", "recover-voice --thread-id UUID --voice-id UUID", "storage backup|inspect|restore|adopt|move|configure"), "runtime": "Standalone Go; no Python, Node.js or Go installation needed"}
 	}
 	cmd := commands[0]
-	require(has(stringsA("sync", "lesson", "version", "prepare", "paths", "serve", "service", "doctor", "open", "live", "review-begin", "review-context", "resume", "validate", "storage", "recover-voice", "init", "migrate", "rebuild", "render", "add-session", "finish-review", "set-preferences", "checkpoint", "recover", "add-evidence", "export"), cmd), "Unknown command: "+cmd)
+	require(has(stringsA("lesson", "version", "prepare", "paths", "serve", "service", "doctor", "open", "live", "review-begin", "review-context", "resume", "validate", "storage", "recover-voice", "init", "migrate", "rebuild", "render", "add-session", "finish-review", "set-preferences", "checkpoint", "recover", "add-evidence", "export"), cmd), "Unknown command: "+cmd)
 	for flag, name := range map[string]string{"codex-home": "CODEX_HOME", "skill-root": "JAPANESE_COACH_SKILL_ROOT", "codex-executable": "JAPANESE_COACH_CODEX"} {
 		if value := str(o[flag]); value != "" {
 			must(os.Setenv(name, absolute(value)))
@@ -71,17 +71,6 @@ func runCLI(args []string) any {
 	source := str(o["source"])
 	day := textOr(o["today"], today())
 	checkDate(day)
-	if cmd == "sync" {
-		ensureWorkspace(w)
-		action := "status"
-		if len(commands) > 1 {
-			action = commands[1]
-		}
-		if action == "status" {
-			return syncInfo(root)
-		}
-		return syncRun(root, action, str(o["directory"]), str(o["choose"]))
-	}
 	if cmd == "lesson" {
 		ensureWorkspace(w)
 		action := "show"
@@ -235,16 +224,12 @@ func runCLI(args []string) any {
 	}
 	if cmd == "resume" {
 		ensureWorkspace(w)
-		var syncState M
-		w, syncState = syncBeforePractice(w)
-		root = str(w["data_root"])
 		var scene M
 		if str(o["scene"]) != "" {
 			scene = obj(readJSON(str(o["scene"])))
 		}
 		result := transitionContext(resumeContext(root, day, str(o["phase"]), scene, str(o["topic"])), str(o["event"]))
 		result["workspace"] = w
-		result["sync"] = syncState
 		if truth(o["with-project"]) && str(w["project_page"]) != "" {
 			result["project_context"] = string(readFile(str(w["project_page"])))
 		}

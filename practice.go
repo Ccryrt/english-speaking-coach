@@ -299,7 +299,6 @@ func preparePractice(args M) M {
 	args = merge(args, M{"source": sourceState["source"]})
 	w := workspace(str(args["root"]))
 	ensureWorkspace(w)
-	w, syncState := syncBeforePractice(w)
 	root := str(w["data_root"])
 	var scene M
 	if str(args["scene"]) != "" {
@@ -413,7 +412,6 @@ func preparePractice(args M) M {
 		result["caption_url"] = result["url"]
 		result["url"] = strings.TrimRight(base, "/") + "/#guided"
 	}
-	result["sync"] = syncState
 	prepared = true
 	return result
 }

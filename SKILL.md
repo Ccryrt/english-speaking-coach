@@ -5,10 +5,6 @@ description: Practice English or Japanese with a language selector, guided micro
 
 # 语言交流 / Language Exchange
 
-## Continue on a new computer
-
-For iCloud, device changes, restoring prior learning, or sync errors, read [Device sync](references/device-sync.md). A fresh computer installs this fork’s released plugin and connects the same cloud folder once. Routine practice checks updates before starting and publishes saved learning automatically; surface pending/offline/conflict status honestly.
-
 ## Select the practice language first
 
 This is one plugin with English and Japanese modes. For a new practice, run `sh "<skill-root>/scripts/coach" language` to read the webpage's saved selection (default English). If the user explicitly requests English or Japanese, run `coach language set en|ja`; their request overrides the saved choice. Maintenance does not start practice.
