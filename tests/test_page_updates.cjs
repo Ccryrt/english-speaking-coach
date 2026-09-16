@@ -37,6 +37,14 @@ const lesson = {...meta,id:'SES-20260101-002',date:'2026-01-01',title:'Synthetic
   book:'Test',summary:'Only a fixture',excerpts:[],expression_count:0,source_ids:[]};
 
 (async()=>{
+  const guidedData={revision:'one',stage:'supported',title:'Fixture lesson',goal:'Fixture goal',instruction:'Replace the task',prompt:'start',models:[{text:'SECRET_MODEL',meaning:'Fixture meaning'}]};
+  const guided=browser('#guided',url=>url==='/api/lesson'?guidedData:url==='/api/reviews'?{items:[]}:overview);
+  await flush();
+  assert.match(guided.elements.get('#content').innerHTML,/SECRET_MODEL/);
+  guidedData.revision='two';guidedData.stage='independent';delete guidedData.models;
+  await vm.runInContext('refreshReviews()',guided.context);
+  assert.doesNotMatch(guided.elements.get('#content').innerHTML,/SECRET_MODEL/,'Independent practice removes the model from DOM');
+  assert.match(guided.elements.get('#content').innerHTML,/独立尝试/);
   let saved = false;
   const first = browser('#review?thread=one&voice=two',url=>url.startsWith('/api/review')
     ? {...meta,status:saved?'saved':'waiting',session_id:saved?lesson.id:null} : overview);

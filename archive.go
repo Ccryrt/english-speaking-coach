@@ -279,6 +279,9 @@ func clampInt(v any, def, low, high int) int {
 	return min(high, max(low, n))
 }
 func (a *Archive) query(path string, args M) M {
+	if path == "/api/lesson" {
+		return lessonView(a.root, today())
+	}
 	if path == "/api/live" {
 		l := openLive(a.root)
 		defer l.close()
