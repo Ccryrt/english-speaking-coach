@@ -332,7 +332,13 @@ func reviewRoute(thread, voice string) string {
 	voiceSources(thread, voice)
 	return "#review?thread=" + thread + "&voice=" + voice
 }
-func workspace(root string) M {
+func workspace(root string) (result M) {
+	defer func() {
+		p := filepath.Join(str(result["data_root"]), "profile.json")
+		if exists(p) {
+			validateProfile(obj(readJSON(p)))
+		}
+	}()
 	if root != "" {
 		return M{"data_root": absolute(root), "project_page": nil, "mode": "explicit", "config_path": configPath()}
 	}

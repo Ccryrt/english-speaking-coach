@@ -1,15 +1,8 @@
----
-name: japanese-speaking-coach
-description: Practice Japanese for daily life, workplace communication and interviews, with Chinese help, a live bilingual companion and saved review cards. 用于练日语、日语面试与职场口语；英语练习继续使用英语插件，维护请求不开始练习。
----
-
-# Japanese Speaking Coach / 日语口语教练
-
-Use natural Japanese first, with short Chinese help when requested or when the learner is stuck. Keep the current situation and let the learner try a useful Japanese phrase before moving on. Maintenance, installation and design discussions use the user's language and do not create practice records. A request to practice English belongs to the existing English coach; do not change its files, preferences, service or learning archive.
+# Japanese practice / 日语练习
 
 ## Start the requested practice
 
-Run the bundled entry with `sh "<skill-root>/scripts/coach"` (PowerShell: `& "<skill-root>/scripts/coach.ps1"`). It verifies and starts the Japanese runtime, never downloads an English binary. On first use `coach init` initializes a separate Japanese archive. If it reports an existing unavailable archive, recover that location instead of creating a replacement. Commands below use `coach` as shorthand for this entry.
+Run the bundled entry with `sh "<skill-root>/scripts/coach" --language ja` (PowerShell: `& "<skill-root>/scripts/coach.ps1" --language ja`). Use the existing English coach entry with `--language ja` on every command. On first use `coach init` initializes a separate Japanese archive. If it reports an existing unavailable archive, recover that location instead of creating a replacement. Commands below use `coach` as shorthand for the shared entry with `--language ja`.
 
 Choose the requested topic: `daily`, `work`, `interview`, or `mixed` when unspecified. A topic is a per-practice choice; it does not rewrite saved preferences. For a specific user scenario, provide `--scene <json>` containing `setting`, `learner_role`, `partner_role`, `goal`, `introduction`, `opening_line` and `category` (`daily`, `work`, `interview`). Use Japanese scene content and an open first question. Honor user-selected roles and facts.
 
@@ -33,8 +26,8 @@ The page preserves raw utterances and adds Chinese translations and optional col
 
 For explicit Voice end requests, use the available end-call tool before review paperwork. After a real close, open the returned `review_url`; the local worker prepares a review for that exact task and Voice. `coach review-begin --thread-id <task> --voice-id <voice>` queues/reuses that closed session if needed. Check the saved status; provisional suggestions are not a saved lesson. Never create a competing manual review while a worker owns it.
 
-For ended text practice, follow [the record contract](references/records.md), selecting actual chat evidence and calling `coach add-session --input <file> --check`. Open that exact saved lesson. Maintenance creates no lesson; viewing or flipping a card never counts as speaking or mastery.
+For ended text practice, follow [the record contract](japanese/records.md), selecting actual chat evidence and calling `coach add-session --input <file> --check`. Open that exact saved lesson. Maintenance creates no lesson; viewing or flipping a card never counts as speaking or mastery.
 
 Review notes use Chinese. Save the original attempt separately from the recommended `japanese` expression and its `chinese` meaning. Optional `reading` uses kana, `register` explains the audience/politeness, and `correction_kind` distinguishes error/naturalness/register/already_correct. Use evidence to separate prompted repetition from independent use. Do not fabricate missed teaching as something the learner received.
 
-For diagnosis, preference changes, backup or recovery, read [runtime operations](references/runtime.md). This derivative keeps English and Japanese archives and services separate.
+For diagnosis, preference changes, backup or recovery, read [runtime operations](japanese/runtime.md). The shared webpage uses `/ja/`; English and Japanese records remain separate.

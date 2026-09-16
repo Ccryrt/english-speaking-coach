@@ -1,5 +1,5 @@
 #!/bin/sh
-# Agent entry point. Downloads a pinned standalone binary; never installs a runtime.
+# Shared English/Japanese entry. Requires the verified bundled runtime.
 set -eu
 coach_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 coach_version=$(tr -d '\r\n' < "$coach_root/runtime-version.txt")
@@ -14,33 +14,15 @@ coach_sha256() {
 }
 # Copies may lose executable bits. Repair only bytes verified at installation;
 # legacy caches without a receipt are downloaded and checked if not executable.
-if [ -f "$coach_binary" ] && [ -f "$coach_receipt" ]; then
+[ -f "$coach_receipt" ] || { echo "Runtime receipt missing; rebuild/reinstall the plugin." >&2; exit 1; }
+if [ -f "$coach_binary" ]; then
   coach_cached_expected=$(tr -d '\r\n' < "$coach_receipt")
   [ "$(coach_sha256 "$coach_binary")" = "$coach_cached_expected" ] || { echo 'Cached runtime checksum mismatch; nothing executed. Agent must restore the verified pinned release.' >&2; exit 1; }
   [ -x "$coach_binary" ] || chmod 755 "$coach_binary"
 fi
 if [ ! -x "$coach_binary" ]; then
-  mkdir -p "$coach_root/bin"
-  coach_tmp=$(mktemp -d "$coach_root/bin/.download-XXXXXX")
-  trap 'rm -rf "$coach_tmp"' EXIT HUP INT TERM
-  coach_base="https://github.com/yomage-ai/english-speaking-coach/releases/download/$coach_version"
-  curl --fail --location --proto '=https' --tlsv1.2 --connect-timeout 15 --max-time 180 --retry 2 "$coach_base/$coach_name.tar.gz" -o "$coach_tmp/archive.tar.gz"
-  curl --fail --location --proto '=https' --tlsv1.2 --connect-timeout 15 --max-time 60 --retry 2 "$coach_base/SHA256SUMS" -o "$coach_tmp/SHA256SUMS"
-  coach_expected=$(awk -v name="$coach_name.tar.gz" '$2 == name {print $1}' "$coach_tmp/SHA256SUMS")
-  [ ${#coach_expected} -eq 64 ] || { echo 'Missing or duplicate release checksum' >&2; exit 1; }
-  coach_actual=$(coach_sha256 "$coach_tmp/archive.tar.gz")
-  [ "$coach_actual" = "$coach_expected" ] || { echo 'Release checksum mismatch; nothing installed' >&2; exit 1; }
-  # The archive is produced by the pinned release workflow. Extract just the binary.
-  tar -xzf "$coach_tmp/archive.tar.gz" -C "$coach_tmp" english-coach LICENSE THIRD_PARTY_NOTICES.txt
-  chmod 755 "$coach_tmp/english-coach"
-  "$coach_tmp/english-coach" version > "$coach_tmp/version.json"
-  coach_sha256 "$coach_tmp/english-coach" > "$coach_tmp/binary.sha256"
-  mv "$coach_tmp/LICENSE" "$coach_root/bin/$coach_name.LICENSE"
-  mv "$coach_tmp/THIRD_PARTY_NOTICES.txt" "$coach_root/bin/$coach_name.NOTICES.txt"
-  mv "$coach_tmp/english-coach" "$coach_binary"
-  mv "$coach_tmp/binary.sha256" "$coach_receipt"
-  rm -rf "$coach_tmp"
-  trap - EXIT HUP INT TERM
+  echo 'Combined runtime missing. Rebuild/reinstall this English + Japanese plugin; the upstream English-only release cannot replace it.' >&2
+  exit 1
 fi
 export ENGLISH_COACH_SKILL_ROOT="$coach_root"
 exec "$coach_binary" "$@"

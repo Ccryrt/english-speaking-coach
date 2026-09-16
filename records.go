@@ -34,6 +34,9 @@ func profileDefault() M {
 	return M{"schema_version": 1, "goal": "清楚、自然地表达自己的想法 / Express ideas clearly and naturally", "practice_language": "english_first", "help_language": "zh-CN", "mode": "roleplay", "correction": "in_character", "drills": "guided", "review_delivery": "written", "review_limit": 2, "input_support": "adaptive", "source_ids": A{}, "updated": today()}
 }
 func initialize(root string) {
+	if exists(filepath.Join(root, "profile.json")) {
+		validateProfile(obj(readJSON(filepath.Join(root, "profile.json"))))
+	}
 	for _, d := range []string{"Sessions", "Weeks", "Archive", "Pending", "Evidence"} {
 		mkdir(filepath.Join(root, d))
 	}
@@ -56,6 +59,7 @@ func initialize(root string) {
 func ensureWorkspace(w M) {
 	root := str(w["data_root"])
 	if exists(filepath.Join(root, "profile.json")) {
+		validateProfile(obj(readJSON(filepath.Join(root, "profile.json"))))
 		return
 	}
 	require(str(w["mode"]) == "user-data" && emptyDir(root), "Configured archive is unavailable; no empty replacement created")
@@ -66,6 +70,7 @@ func ensureWorkspace(w M) {
 	})
 }
 func validateProfile(p M) {
+	require(p["target_language"] == nil || p["target_language"] == "en", "This is not an English archive; use the correct language")
 	require(strings.TrimSpace(str(p["goal"])) != "", "goal must be nonempty")
 	choices := map[string][]string{"practice_language": {"english_first", "bilingual"}, "help_language": {"zh-CN", "en"}, "mode": {"conversation", "roleplay", "focused"}, "correction": {"light", "detailed", "after_scene", "in_character"}, "drills": {"on_request", "guided"}}
 	for k, a := range choices {

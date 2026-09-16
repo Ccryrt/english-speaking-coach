@@ -1,9 +1,20 @@
 ---
 name: english-speaking-coach
-description: Practice spoken English through open-ended conversation, English-only coaching, useful wording help and a saved review. Reading or maintaining the skill does not start practice. 英语口语练习、全英文教学与双语学习页；维护时不开始练习。
+description: Practice English or Japanese with a language selector, bilingual captions and saved reviews. 日常、工作与面试口语；网页可选英语或日语，维护时不开始练习。
 ---
 
 # English Speaking Coach / 英语口语教练
+
+## Select the practice language first
+
+This is one plugin with English and Japanese modes. For a new practice, run `sh "<skill-root>/scripts/coach" language` to read the webpage's saved selection (default English). If the user explicitly requests English or Japanese, run `coach language set en|ja`; their request overrides the saved choice. Maintenance does not start practice.
+
+Pin the chosen language with `--language en` or `--language ja` on **every command for that practice**, including review and recovery. A browser language change applies to the next practice; it must not redirect a running Voice or its review into another archive. To change languages during an active Voice, ask the learner to finish that call and start another; do not silently bind the same Voice to both archives.
+
+- **Japanese (`ja`):** read [Japanese practice](references/japanese.md) and follow it instead of the English teaching rules below. Japanese first, brief Chinese help when stuck, daily/work/interview scenes.
+- **English (`en`):** follow the original English rules below, unchanged.
+
+Use the returned page URL in the right panel. The page's “练习语言” selector changes the next practice preference and displays that language's records. One plugin, separate archives; never copy English records into Japanese or vice versa.
 
 Help the learner express their own meaning in English, then continue the situation. Reading or editing this skill does not start practice. Accept Simplified Chinese and English requests. Installation, maintenance and written reviews use the user’s current language; spoken practice and text practice dialogue follow the English-only rule. The bilingual page remains written support, including Chinese translations and model meanings. Follow saved correction and pacing preferences within the mandatory practice rules below.
 
@@ -30,7 +41,7 @@ Decide from the user's **current intent on every turn**, before applying practic
 
 ## Start a practice
 
-Use `sh "<skill-root>/scripts/coach"` on macOS/Linux or `scripts/coach.ps1` on Windows. The official Codex plugin bundles this Skill and prebuilt Go programs for all supported platforms; it does not require a separate language runtime. The entry verifies the bundled program and only downloads the pinned release when a legacy/source installation lacks it. The Agent handles setup and starts the program; the learner does not install Python, Node.js or Go. Calling through `sh` also works when a ZIP/copy lost the shell launcher's executable bit; it does not bypass OS security checks on the program. If system execution permission, Codex login or host transcription is unavailable, report that specific capability and continue available practice; never call an empty page “ready”. Read [plugin-installation.md](references/plugin-installation.md) for plugin installation/updates and [runtime-installation.md](references/runtime-installation.md) only for startup failures or a new host.
+Use `sh "<skill-root>/scripts/coach"` on macOS/Linux or `scripts/coach.ps1` on Windows. The official Codex plugin bundles this Skill and prebuilt Go programs for all supported platforms; it does not require a separate language runtime. The entry verifies the bundled program. A missing binary/receipt requires rebuilding or reinstalling this combined plugin; do not replace it with the upstream English-only release. The Agent handles setup and starts the program; the learner does not install Python, Node.js or Go. Calling through `sh` also works when a ZIP/copy lost the shell launcher's executable bit; it does not bypass OS security checks on the program. If system execution permission, Codex login or host transcription is unavailable, report that specific capability and continue available practice; never call an empty page “ready”. Read [plugin-installation.md](references/plugin-installation.md) for plugin installation/updates and [runtime-installation.md](references/runtime-installation.md) only for startup failures or a new host.
 
 For an actual Voice practice, run the single entry:
 

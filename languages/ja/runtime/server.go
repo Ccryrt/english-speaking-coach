@@ -82,6 +82,10 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		sendJSON(w, r, 403, M{"error": "仅可从本机学习网页访问。"})
 		return
 	}
+	if s.managed && (r.URL.Path == "/" || r.URL.Path == "/index.html") && r.Header.Get("X-Coach-Gateway") != "1" && (r.Method == "GET" || r.Method == "HEAD") {
+		http.Redirect(w, r, "http://127.0.0.1:8897/ja/", http.StatusTemporaryRedirect)
+		return
+	}
 	if r.Method == "POST" {
 		origin := r.Header.Get("Origin")
 		if origin != "" && origin != "http://"+r.Host || subtle.ConstantTimeCompare([]byte(r.Header.Get("X-Coach-Token")), []byte(s.archive.token)) != 1 {

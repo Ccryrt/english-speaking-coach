@@ -43,12 +43,34 @@ func parseArgs(args []string) ([]string, M) {
 	}
 	return commands, opts
 }
-func runCLI(args []string) any {
+func runCLI(args []string) (output any) {
+	defer func() {
+		if value, ok := output.(map[string]any); ok && value["language"] != "ja" {
+			languageURLs(value, "http://127.0.0.1:8897", "http://127.0.0.1:8897/en")
+		}
+	}()
 	commands, o := parseArgs(args)
 	if len(commands) == 0 || truth(o["help"]) {
 		return M{"application": "english-speaking-coach", "version": version, "commands": stringsA("prepare --auto-scene --opening --with-project", "resume --compact --with-project", "serve --workspace --port 8897", "service start|status|stop|resume", "doctor [--probe]", "paths", "init|rebuild|validate", "add-session|finish-review --input FILE", "review-begin|review-context --thread-id UUID --voice-id UUID", "set-preferences --input FILE --expected-profile-sha256 HASH", "checkpoint|recover|add-evidence|export", "live start|status|stop|resume|disable|probe", "recover-voice --thread-id UUID --voice-id UUID", "storage backup|inspect|restore|adopt|move|configure"), "runtime": "Standalone Go; no Python, Node.js or Go installation needed"}
 	}
 	cmd := commands[0]
+	if value := str(o["codex-home"]); value != "" {
+		must(os.Setenv("CODEX_HOME", absolute(value)))
+	}
+	if value := str(o["skill-root"]); value != "" {
+		must(os.Setenv("ENGLISH_COACH_SKILL_ROOT", absolute(value)))
+	}
+	if cmd == "language" {
+		return languageCommand(commands)
+	}
+	if language := str(o["language"]); language != "" {
+		require(language == "en" || language == "ja", "Language must be en or ja")
+		if language == "ja" {
+			return runJapanese(args, commands, o)
+		}
+	} else if has(stringsA("prepare", "resume", "open"), cmd) && str(o["root"]) == "" && selectedLanguage() == "ja" {
+		return runJapanese(args, commands, o)
+	}
 	require(has(stringsA("version", "prepare", "paths", "serve", "service", "doctor", "open", "live", "review-begin", "review-context", "resume", "validate", "storage", "recover-voice", "init", "migrate", "rebuild", "render", "add-session", "finish-review", "set-preferences", "checkpoint", "recover", "add-evidence", "export"), cmd), "Unknown command: "+cmd)
 	for flag, name := range map[string]string{"codex-home": "CODEX_HOME", "skill-root": "ENGLISH_COACH_SKILL_ROOT", "codex-executable": "ENGLISH_COACH_CODEX"} {
 		if value := str(o[flag]); value != "" {

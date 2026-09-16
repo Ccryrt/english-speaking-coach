@@ -29,6 +29,7 @@ type Server struct {
 	plans    map[string]*TransferPlan
 	parent   context.Context
 	instance string
+	japanese http.Handler
 }
 
 func newServer(root string, managed bool) *Server {
@@ -66,6 +67,12 @@ func (s *Server) identity() M {
 	return M{"application": "english-speaking-coach", "runtime": "go", "version": version, "code_revision": revision, "pid": os.Getpid(), "executable": exe, "data_root": s.archive.root, "skill_root": skillRoot(), "workspace_managed": s.managed, "instance_id": s.instance, "platform": runtime.GOOS + "/" + runtime.GOARCH}
 }
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if s.languageRoute(w, r) {
+		return
+	}
+	s.serveEnglish(w, r)
+}
+func (s *Server) serveEnglish(w http.ResponseWriter, r *http.Request) {
 	s.gate.Lock()
 	defer s.gate.Unlock()
 	w.Header().Set("Cache-Control", "no-store")

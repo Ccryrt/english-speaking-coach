@@ -39,7 +39,7 @@
       finally{button.disabled=false;}
     }
     q('#download-backup').addEventListener('click',e=>run(e.currentTarget,async()=>{
-      const blob=await post('/api/storage/backup',{include_live:q('#backup-live').checked},true);
+      const blob=await post('api/storage/backup',{include_live:q('#backup-live').checked},true);
       const url=URL.createObjectURL(blob),a=document.createElement('a');
       a.href=url;a.download='english-learning-'+new Date().toISOString().slice(0,10)+'.zip';
       document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
@@ -67,7 +67,7 @@
           for(let i=0;i<bytes.length;i+=8192)raw+=String.fromCharCode(...bytes.subarray(i,i+8192));
           body.backup_base64=btoa(raw);
         }
-        const result=await post('/api/storage/preview',body);
+        const result=await post('api/storage/preview',body);
         plan=result.plan;
         preview.innerHTML=`<h3>确认使用这个目录</h3><code>${esc(result.destination)}</code>
           <p>${result.counts.sessions} 次练习 · ${result.counts.expressions} 条表达 · ${result.counts.concepts} 个知识点</p>
@@ -75,7 +75,7 @@
         preview.hidden=false;status.textContent='校验完成；尚未切换。';
         q('#apply-storage').addEventListener('click',e=>run(e.currentTarget,async()=>{
           if(!plan)throw new Error('预览已失效，请重新校验。');
-          const result=await post('/api/storage/apply',{plan});
+          const result=await post('api/storage/apply',{plan});
           status.textContent=result.message;
           location.reload();
         }));

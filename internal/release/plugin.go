@@ -58,7 +58,11 @@ func buildPlugin(root, version, revision string, programs map[string][]byte) []b
 		payload[skill+"scripts/"+name] = read(filepath.Join(root, "scripts", name))
 	}
 	for name, b := range programs {
-		payload[skill+"bin/"+name] = b
+		if strings.HasPrefix(name, "japanese-coach_") {
+			payload[skill+"languages/ja/bin/"+name] = b
+		} else {
+			payload[skill+"bin/"+name] = b
+		}
 	}
 	files := map[string]string{}
 	for name, b := range payload {

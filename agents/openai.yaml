@@ -1,6 +1,6 @@
 interface:
-  display_name: "English Speaking Coach / 英语口语教练"
-  short_description: "全英文情景练习与开放提问，保留双语页面和书面复盘"
-  default_prompt: "Use $english-speaking-coach to practice English; keep the exercise in English even when I use Chinese, and keep Chinese help on the written page."
+  display_name: "English Speaking Coach / 英语与日语口语"
+  short_description: "在同一个教练中选择英语或日语，练习日常、工作与面试，查看双语字幕和复习记录"
+  default_prompt: "Use $english-speaking-coach to practice the language selected on my learning page."
 policy:
   allow_implicit_invocation: true

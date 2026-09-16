@@ -6,7 +6,7 @@ The Agent owns installation, diagnosis, initialization, service setup and verifi
 
 - macOS / Linux: `sh "<skill>/scripts/coach" <command>`.
 - Windows: `& <skill>/scripts/coach.ps1 <command>`.
-- The entry reads `runtime-version.txt` and verifies the matching program in `<skill>/bin/`. The formal plugin bundle already includes all supported platform programs; see [plugin-installation.md](plugin-installation.md). A legacy/source Skill without a program downloads the exact release artifact over HTTPS and verifies SHA-256. Data remains outside the Skill. Neither route needs a user-installed development runtime.
+- The entry reads `runtime-version.txt` and verifies the matching program in `<skill>/bin/`. The formal plugin bundle already includes all supported platform programs; see [plugin-installation.md](plugin-installation.md). This branch requires its combined English/Japanese plugin build; a missing binary or receipt fails explicitly. Never download the upstream English-only runtime as a replacement. Data remains outside the Skill. Neither route needs a user-installed development runtime.
 - Published targets are macOS Intel/Apple Silicon, Linux x64/ARM64 and Windows x64/ARM64. Host features remain separate: local files, a Codex app-server CLI, existing ChatGPT login, and source-bound Voice transcript events. A compiled binary does not add unsupported Voice features to mobile, ChatGPT web or another agent.
 - Downloads can fail on a restricted network. The Agent may obtain the same pinned release through an allowed network path and verify the official checksum. Do not silently substitute an unknown executable, disable Gatekeeper/SmartScreen, or install a global language runtime as a fallback.
 

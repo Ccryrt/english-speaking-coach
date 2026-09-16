@@ -87,7 +87,7 @@ window.CoachLive = (() => {
     try {
       request?.abort();request=new AbortController();
       const timeout=setTimeout(()=>request.abort(),8000);
-      let r;try{r=await fetch('/api/live?'+new URLSearchParams(options),{cache:'no-store',signal:request.signal});}finally{clearTimeout(timeout);}
+      let r;try{r=await fetch('api/live?'+new URLSearchParams(options),{cache:'no-store',signal:request.signal});}finally{clearTimeout(timeout);}
       const d=await r.json();if(!r.ok)throw new Error(d.error||'读取失败');
       if(token!==generation)return;paint(d);
     } catch(error) {
@@ -103,7 +103,7 @@ window.CoachLive = (() => {
     resizeObserver?.disconnect();
     resizeObserver=new ResizeObserver(()=>{if(follow&&!options.page){const f=get('#live-feed');if(f)f.scrollTop=f.scrollHeight;}});
     resizeObserver.observe(get('#live-feed'));
-    const retry=get('#live-retry-translation');if(retry)retry.addEventListener('click',async()=>{const run=current?.state?.id, token=generation;if(!run)return;retry.disabled=true;try{const storage=await fetch('/api/storage',{cache:'no-store'});const info=await storage.json();if(!storage.ok)throw new Error(info.error||'读取失败');const response=await fetch('/api/live/retry',{method:'POST',headers:{'Content-Type':'application/json','X-Coach-Token':info.open_token},body:JSON.stringify({run})});const result=await response.json();if(!response.ok)throw new Error(result.error||'重试失败');if(token===generation)refresh();}catch(error){if(token===generation)notice(error.message);}finally{if(token===generation)retry.disabled=false;}});
+    const retry=get('#live-retry-translation');if(retry)retry.addEventListener('click',async()=>{const run=current?.state?.id, token=generation;if(!run)return;retry.disabled=true;try{const storage=await fetch('api/storage',{cache:'no-store'});const info=await storage.json();if(!storage.ok)throw new Error(info.error||'读取失败');const response=await fetch('api/live/retry',{method:'POST',headers:{'Content-Type':'application/json','X-Coach-Token':info.open_token},body:JSON.stringify({run})});const result=await response.json();if(!response.ok)throw new Error(result.error||'重试失败');if(token===generation)refresh();}catch(error){if(token===generation)notice(error.message);}finally{if(token===generation)retry.disabled=false;}});
     get('#live-chinese').addEventListener('change',event=>{chinese=event.target.checked;localStorage.setItem('coach-live-chinese',chinese?'always':'on-demand');paint(current);});
     get('#live-runs').addEventListener('change',event=>{location.hash='#live'+(event.target.value?'?run='+event.target.value:'');});
     get('#live-older').addEventListener('click',()=>{delete options.offset;options.page=String(Math.max(1,current.page-1));follow=false;refresh();get('#live-feed').scrollTop=0;});

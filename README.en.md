@@ -1,37 +1,11 @@
-Copy this request to Codex to install:
+# English Speaking Coach — English and Japanese
 
-> Install the English Speaking Coach plugin from https://github.com/yomage-ai/english-speaking-coach.
+This branch adds a Japanese option to the existing English coach. Use the **Practice language / 练习语言** selector on the shared learning page at http://127.0.0.1:8897/. The one `$english-speaking-coach` skill reads the saved selection; explicit language requests override it. English teaching rules remain unchanged.
 
-[简体中文](README.md)
+Japanese covers everyday life, workplace communication and interviews, with Chinese support, kana readings and contextual register notes. Each language keeps its original archive and backup format. Switching applies to the next practice; start another Voice call to change a running session's language.
 
-# English Speaking Coach
+Build the combined plugin with `go run ./internal/release -targets darwin/arm64` (or another supported OS/architecture). Run `go test ./...` and `(cd languages/ja/runtime && go test ./...)`. The ZIP in `dist/` includes both verified native runtimes and one discoverable skill, with no runtime/compiler installation required for the learner. Do not replace it with the upstream English-only release.
 
-Practice English in travel, restaurant, interview and other everyday situations. Afterward, review useful expressions, flashcards and your progress. Tell Codex what you want to practice; it prepares the session and saves your records.
+The Japanese runtime lives in `languages/ja/runtime/` and is an internal component, reachable through the same page under `/ja/`. Its existing data directory is preserved. Native Voice behavior requires actual voice testing; browser/model tests are not audio validation.
 
-## Get started
-
-After installation, start in a new task:
-
-Open Voice, then send `/$english-speaking-coach`. You can also choose **English Speaking Coach** from the Skill menu in the message box.
-
-Tip: Practice dialogue uses English. If you do not know how to say something, express the meaning in Chinese; the coach checks your meaning in English and helps you form a useful phrase.
-
-## What you can review
-
-| Page | Content |
-| --- | --- |
-| Bilingual companion | Follow both speakers' original transcript and Chinese translations during practice |
-| Session review | See expressions from the session, improvements and the next focus |
-| Learning review | Revisit earlier practices and changes over time |
-| Flashcards | Review useful wording, grouping, stress and intonation notes |
-| Local learning data | Open, back up, restore or move your learning archive |
-
-## Before you use it
-
-- Voice practice requires Voice.
-- It uses your existing ChatGPT login and account quota; no separate API key is needed. You only need to handle login, microphone or system file permission when prompted.
-- Learning records stay on your computer. AI conversation and translation use your chosen model service.
-
-## License
-
-Source is publicly available. Personal noncommercial learning is free; selling the software, paid services, commercial product integration, employer-provided training and other commercial uses require a separate written license. Independent personal interview preparation or learning work-related English remains free. [Full license](LICENSE) · [Commercial licensing contact](https://github.com/yomage-ai/english-speaking-coach/issues)
+Derived from yomage-ai/english-speaking-coach. See LICENSE for original terms.

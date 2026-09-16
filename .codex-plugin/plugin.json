@@ -1,15 +1,15 @@
 {
   "name": "english-speaking-coach",
   "version": "1.0.2",
-  "description": "Practice spoken English with bilingual captions, saved reviews and flashcards. 英语口语练习、双语字幕与复习卡片。",
+  "description": "English and Japanese speaking practice with a language selector, bilingual captions and review cards.",
   "author": {
     "name": "yomage-ai"
   },
   "skills": "./skills/",
   "interface": {
-    "displayName": "English Speaking Coach",
-    "shortDescription": "英语口语练习、双语字幕与复习卡片",
-    "longDescription": "Practice spoken English through open conversation. Codex prepares a local bilingual page and saves selected learning evidence. 用户无需安装语言环境；安装与启动由 Agent 完成。",
+    "displayName": "English Speaking Coach · 英语 / 日语",
+    "shortDescription": "英语与日语口语练习、双语字幕与复习卡片",
+    "longDescription": "Choose English or Japanese in one coach and one learning page. 日常生活、工作沟通与面试练习，分别保存两种语言的学习记录。",
     "developerName": "yomage-ai",
     "category": "Education",
     "capabilities": [
@@ -17,6 +17,6 @@
       "Read",
       "Write"
     ],
-    "defaultPrompt": "Help me practice English. Keep the exercise in English, even when I use Chinese; keep Chinese help on the written page."
+    "defaultPrompt": "Help me practice the language selected on my learning page."
   }
 }

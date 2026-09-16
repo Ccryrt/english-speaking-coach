@@ -27,6 +27,8 @@ func TestPluginShipsVerifiedProgramsWithoutPrivateOrDeveloperRuntime(t *testing.
 	}
 	binary := []byte("verified fixture program")
 	programs := map[string][]byte{"english-coach_v0.2.9_darwin_arm64": binary, "english-coach_v0.2.9_darwin_arm64.sha256": []byte(digest(binary) + "\n")}
+	programs["japanese-coach_v0.2.9_darwin_arm64"] = binary
+	programs["japanese-coach_v0.2.9_darwin_arm64.sha256"] = []byte(digest(binary) + "\n")
 	blob := buildPlugin(root, "v0.2.9", "revision-fixture", programs)
 	z, err := zip.NewReader(bytes.NewReader(blob), int64(len(blob)))
 	must(err)
@@ -57,6 +59,10 @@ func TestPluginShipsVerifiedProgramsWithoutPrivateOrDeveloperRuntime(t *testing.
 		if digest(files[name]) != expected {
 			t.Fatalf("Checksum mismatch: %s", name)
 		}
+	}
+	jaBase := "skills/english-speaking-coach/languages/ja/bin/japanese-coach_v0.2.9_darwin_arm64"
+	if string(files[jaBase+".sha256"]) != digest(files[jaBase])+"\n" {
+		t.Fatal("Japanese runtime missing from combined package")
 	}
 	base := "skills/english-speaking-coach/bin/english-coach_v0.2.9_darwin_arm64"
 	if string(files[base+".sha256"]) != digest(files[base])+"\n" {

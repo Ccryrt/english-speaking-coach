@@ -38,7 +38,7 @@ function updateMeta(data) {
 }
 function loadGoalInBackground() {
   if(overviewLoading)return;
-  overviewLoading=api('/api/overview').then(data=>{
+  overviewLoading=api('api/overview').then(data=>{
     overview=data;$('#goal').textContent=data.profile.goal;
   }).catch(()=>{}).finally(()=>{overviewLoading=null;});
 }
@@ -86,7 +86,7 @@ function lessonPage(s) {
   const rest=s.review_priority_ids?s.excerpts.filter(e=>!selected.has(e.id)):s.excerpts.slice(3);
   const count=`${s.excerpts.length} 组完整表达 · ${s.card_count ?? s.expression_count} 张词句卡`;
   const coverage=s.review_coverage;
-  return `<a class="back" href="#sessions">← 返回对话记录</a><div class="lesson-heading"><span class="eyebrow">${esc(fullDate(s.date))}</span><h1>${esc(s.title)}</h1><div class="meta">${tag(s.book)}<span>${count}</span>${tip('复盘与卡片','完整表达包含原话、推荐说法和帮助情况；词卡还可能包含从整句抽出的单词，所以数量不同。先看优先表达，再展开其余内容；到本次词卡核对全部收录。')}${s.recovered_on?'<span>补录于 '+esc(s.recovered_on)+'</span>':''}</div></div><div class="lesson-layout"><div><section class="lesson-summary"><h2>这次聊了什么</h2><p>${esc(s.summary || '本次没有单独保存摘要。')}</p></section><div class="section-head"><div><h2>${first.length?'先练这几句':'本次表达'}</h2><p class="fine">${s.review_priority_ids?'根据本次求助和表达问题选取；其余值得保留的内容仍在下方。':'先看原记录中的几句；其余表达可在下方展开。'}</p></div></div><div>${first.map(excerpt).join('') || (!rest.length?empty('这次没有新的表达需要收录','上方保留了本次总结。'):'')}</div>${rest.length?`<details class="remaining-expressions"><summary>展开其余 ${rest.length} 组表达与原话</summary>${rest.map(excerpt).join('')}</details>`:''}<details class="source-box"><summary>记录来源与完整性</summary><p>${esc(s.evidence_note || '此页仅展示当时保留下来的学习记录。')}</p>${coverage?`<p>已核对 ${coverage.available_learner_turns} 条可用学习者发言，其中 ${coverage.selected_learner_turns} 条关联到学习内容；招呼、已正确表达等内容无需重复制卡。这项核对不代表教学效果已验证。</p>`:''}<p>可用系统声音朗读表达参考；你的原话保留供对照，不参与朗读。<br>这些是精选学习片段，不是完整聊天逐字稿。表达建议不冒充 AI 在会中说过的原话。</p><p>课次编号：${esc(s.id)}</p>${s.source_ids?.length?'<p>来源：'+esc(s.source_ids.join(' · '))+'</p>':''}<a href="/records/${esc(s.id)}.md" target="_blank" rel="noopener">查看原始 Markdown 记录 ↗</a></details></div><aside class="lesson-aside">${s.coaching_notes?.length?`<section class="panel coach-adjustments"><h2>教练下次如何调整</h2>${list(s.coaching_notes)}</section>`:''}<section class="panel"><h2>这次的学习观察</h2>${list(s.progress || ['没有额外保存观察。'])}</section><section class="panel"><h2>下次优先练什么</h2><p class="fine">练习这些表达能力，使用新的生活场景。</p>${list(s.next_focus || ['本次没有额外学习建议。'])}</section>${s.supplement?`<section class="panel"><h2>我的补充</h2><p>${esc(s.supplement)}</p></section>`:''}<section class="panel"><h2>本次词句卡</h2><p>${count}</p><a class="text-link" href="${esc(href('terms',{session:s.id}))}">回顾本次全部词卡 ↗</a></section></aside></div>`;
+  return `<a class="back" href="#sessions">← 返回对话记录</a><div class="lesson-heading"><span class="eyebrow">${esc(fullDate(s.date))}</span><h1>${esc(s.title)}</h1><div class="meta">${tag(s.book)}<span>${count}</span>${tip('复盘与卡片','完整表达包含原话、推荐说法和帮助情况；词卡还可能包含从整句抽出的单词，所以数量不同。先看优先表达，再展开其余内容；到本次词卡核对全部收录。')}${s.recovered_on?'<span>补录于 '+esc(s.recovered_on)+'</span>':''}</div></div><div class="lesson-layout"><div><section class="lesson-summary"><h2>这次聊了什么</h2><p>${esc(s.summary || '本次没有单独保存摘要。')}</p></section><div class="section-head"><div><h2>${first.length?'先练这几句':'本次表达'}</h2><p class="fine">${s.review_priority_ids?'根据本次求助和表达问题选取；其余值得保留的内容仍在下方。':'先看原记录中的几句；其余表达可在下方展开。'}</p></div></div><div>${first.map(excerpt).join('') || (!rest.length?empty('这次没有新的表达需要收录','上方保留了本次总结。'):'')}</div>${rest.length?`<details class="remaining-expressions"><summary>展开其余 ${rest.length} 组表达与原话</summary>${rest.map(excerpt).join('')}</details>`:''}<details class="source-box"><summary>记录来源与完整性</summary><p>${esc(s.evidence_note || '此页仅展示当时保留下来的学习记录。')}</p>${coverage?`<p>已核对 ${coverage.available_learner_turns} 条可用学习者发言，其中 ${coverage.selected_learner_turns} 条关联到学习内容；招呼、已正确表达等内容无需重复制卡。这项核对不代表教学效果已验证。</p>`:''}<p>可用系统声音朗读表达参考；你的原话保留供对照，不参与朗读。<br>这些是精选学习片段，不是完整聊天逐字稿。表达建议不冒充 AI 在会中说过的原话。</p><p>课次编号：${esc(s.id)}</p>${s.source_ids?.length?'<p>来源：'+esc(s.source_ids.join(' · '))+'</p>':''}<a href="records/${esc(s.id)}.md" target="_blank" rel="noopener">查看原始 Markdown 记录 ↗</a></details></div><aside class="lesson-aside">${s.coaching_notes?.length?`<section class="panel coach-adjustments"><h2>教练下次如何调整</h2>${list(s.coaching_notes)}</section>`:''}<section class="panel"><h2>这次的学习观察</h2>${list(s.progress || ['没有额外保存观察。'])}</section><section class="panel"><h2>下次优先练什么</h2><p class="fine">练习这些表达能力，使用新的生活场景。</p>${list(s.next_focus || ['本次没有额外学习建议。'])}</section>${s.supplement?`<section class="panel"><h2>我的补充</h2><p>${esc(s.supplement)}</p></section>`:''}<section class="panel"><h2>本次词句卡</h2><p>${count}</p><a class="text-link" href="${esc(href('terms',{session:s.id}))}">回顾本次全部词卡 ↗</a></section></aside></div>`;
 }
 function cardMode(args) {
   return ['speak','meaning','read'].includes(args.mode) ? args.mode : args.recall === '0' ? 'read' : 'speak';
@@ -126,8 +126,8 @@ async function openLearningFolder(button) {
   if(button.disabled)return;
   button.disabled=true;
   try {
-    const storage=await api('/api/storage');
-    const response=await fetch('/api/storage/open',{method:'POST',headers:{'Content-Type':'application/json','X-Coach-Token':storage.open_token},body:'{}',signal:AbortSignal.timeout(10000)});
+    const storage=await api('api/storage');
+    const response=await fetch('api/storage/open',{method:'POST',headers:{'Content-Type':'application/json','X-Coach-Token':storage.open_token},body:'{}',signal:AbortSignal.timeout(10000)});
     const result=await response.json();
     if(!response.ok)throw new Error(result.error||'未能打开目录');
     toast(result.message);
@@ -172,7 +172,7 @@ function statsPage(data,args) {
 
 async function showTerm(id) {
   try {
-    const t = await api('/api/terms/'+encodeURIComponent(id));
+    const t = await api('api/terms/'+encodeURIComponent(id));
     $('#dialog-content').innerHTML = `${tag(t.book)}<h2 class="dialog-title" id="dialog-title" lang="en">${esc(t.english)}</h2><p class="muted">${esc(t.chinese)}</p>${speechButton(t.english)}${readingGuide(t)}<div class="dialog-section"><h3>我当时说</h3><p>${esc(t.original || '这条没有记录原话。')}</p></div><div class="dialog-section"><h3>用法与练习观察</h3><p>${esc(t.note)}</p><p class="evidence-note">${esc(t.state_label)} · 最近记录于 ${esc(t.updated)}<br>建议再聊：${esc(t.next_review)}。翻看答案不会改变这个状态。</p></div>${t.attempts?.length?`<details class="source-box"><summary>查看 ${t.attempts.length} 条练习观察</summary>${t.attempts.map(a=>`<p>${esc(a.date)} · ${esc(labels[a.prompt]||a.prompt)} · ${esc(a.note||'旧记录未保存更详细的提示过程。')}</p>`).join('')}</details>`:''}<div class="dialog-section"><h3>回到来源对话</h3><div class="source-links">${t.sources.map(s=>`<a href="${esc(href('sessions/'+s.id))}">${esc(shortDate(s.date))} · ${esc(s.title)} ↗</a>`).join('')}</div></div>`;
     $('#term-dialog').showModal();
   } catch(error) {toast(error.message);}
@@ -190,14 +190,14 @@ async function render() {
   $('#breadcrumb').textContent = '我的学习 / '+(names[section]||'档案');
   try {
     // A saved lesson or live feed should not wait for an unrelated overview request.
-    if(path==='stats'&&!overview) overview=await api('/api/overview');
+    if(path==='stats'&&!overview) overview=await api('api/overview');
     let data, markup;
     if(path==='live'){
       main.innerHTML=window.CoachLive.shell();
-      data=await api('/api/live',args);markup=window.CoachLive.shell();
+      data=await api('api/live',args);markup=window.CoachLive.shell();
     }
     else if(path==='review'){
-      data=await api('/api/review',args);
+      data=await api('api/review',args);
       if(version!==renderVersion)return;
       rememberReview(data,args);
       if(data.status==='saved'){location.replace(href('sessions/'+data.session_id));return;}
@@ -205,14 +205,14 @@ async function render() {
         `<section id="review-preview" class="review-preview" aria-label="已可先看的表达建议" ${data.preview?.length?'':'hidden'}>${reviewPreview(data)}</section>`+
         `<section class="review-wait" role="status"><span class="review-indicator" aria-hidden="true"></span><h2 id="review-title">${reviewMessage(data).title}</h2><p id="review-state">${esc(reviewMessage(data).body)}</p><p class="fine">可以先看其他记录；页面上方会保留本次整理状态和返回入口。</p><button class="button" type="button" data-retry-review ${data.status==='error'?'':'hidden'}>重试本场复盘</button> <a class="button" href="#terms">先看全部词句</a></section>`;
     }
-    else if(path==='overview'){data=await api('/api/overview');overview=data;markup=home(data);}
-    else if(path==='sessions'){data=await api('/api/sessions',{...args,limit:10});markup=sessionsPage(data,args);}
-    else if(path.startsWith('sessions/')){data=await api('/api/'+path);markup=lessonPage(data);}
-    else if(path==='terms'){data=await api('/api/terms',{...args,limit:12});markup=termsPage(data,args);}
-    else if(path==='stats'){data=await api('/api/stats',args);markup=statsPage(data,args);}
-    else if(path==='progress'){data=await api('/api/progress',args);markup=progressPage(data,args);}
-    else if(path.startsWith('progress/')){data=await api('/api/'+path,args);markup=progressDetail(data,args);}
-    else if(path==='storage'){data=await api('/api/storage');markup=storagePage(data);}
+    else if(path==='overview'){data=await api('api/overview');overview=data;markup=home(data);}
+    else if(path==='sessions'){data=await api('api/sessions',{...args,limit:10});markup=sessionsPage(data,args);}
+    else if(path.startsWith('sessions/')){data=await api('api/'+path);markup=lessonPage(data);}
+    else if(path==='terms'){data=await api('api/terms',{...args,limit:12});markup=termsPage(data,args);}
+    else if(path==='stats'){data=await api('api/stats',args);markup=statsPage(data,args);}
+    else if(path==='progress'){data=await api('api/progress',args);markup=progressPage(data,args);}
+    else if(path.startsWith('progress/')){data=await api('api/'+path,args);markup=progressDetail(data,args);}
+    else if(path==='storage'){data=await api('api/storage');markup=storagePage(data);}
     else throw new Error('这个页面不存在，请从左侧导航重新打开。');
     if(version!==renderVersion)return;
     markup=markup.replace('可用系统声音朗读表达参考；你的原话保留供对照，不参与朗读。<br>','你的原话保留供对照；书面表达建议不冒充会中原话。<br>');
@@ -304,11 +304,11 @@ async function refreshReviews() {
   reviewPolling=true;
   try {
     if(document.hidden)return;
-    const data=await api('/api/reviews');
+    const data=await api('api/reviews');
     for(const item of data.items||[])rememberReview(item);
     const current=route();
     if(current.path==='review' && !(data.items||[]).some(x=>x.thread_id===current.args.thread&&x.voice_id===current.args.voice)) {
-      rememberReview(await api('/api/review',current.args),current.args);
+      rememberReview(await api('api/review',current.args),current.args);
     }
     paintReviewNotice();
     for(const item of trackedReviews.values())applyReviewToCurrentPage(item);
@@ -379,8 +379,8 @@ scheduleReviews();
 async function retryReview(button) {
   if(button.disabled)return;button.disabled=true;
   try {
-    const {args}=route(),storage=await api('/api/storage');
-    const response=await fetch('/api/review/retry',{method:'POST',headers:{'Content-Type':'application/json','X-Coach-Token':storage.open_token},body:JSON.stringify({thread:args.thread,voice:args.voice})});
+    const {args}=route(),storage=await api('api/storage');
+    const response=await fetch('api/review/retry',{method:'POST',headers:{'Content-Type':'application/json','X-Coach-Token':storage.open_token},body:JSON.stringify({thread:args.thread,voice:args.voice})});
     const result=await response.json();if(!response.ok)throw new Error(result.error);
     toast('本地复盘任务已接收。');scheduleReviews(0);
   }catch(error){toast(error.message);}finally{button.disabled=false;}

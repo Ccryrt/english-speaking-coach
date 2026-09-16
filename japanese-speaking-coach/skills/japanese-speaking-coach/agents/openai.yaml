@@ -1,4 +1,0 @@
-interface:
-  display_name: "Japanese Speaking Coach"
-  short_description: "日语生活、工作沟通与面试练习，支持中文辅助、假名与复习卡"
-  default_prompt: "用 $japanese-speaking-coach 带我练日语，并打开日中伴随页。"

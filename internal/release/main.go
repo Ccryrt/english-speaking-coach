@@ -50,6 +50,15 @@ func main() {
 		}
 		return nil
 	}))
+	must(filepath.WalkDir("languages/ja/runtime", func(p string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if !d.IsDir() && !strings.HasSuffix(p, "_test.go") {
+			files = append(files, p)
+		}
+		return nil
+	}))
 	sort.Strings(files)
 	h := sha256.New()
 	for _, p := range files {
@@ -129,6 +138,16 @@ func main() {
 		pluginPrograms[programName+".sha256"] = []byte(digest(b) + "\n")
 		pluginPrograms[strings.TrimSuffix(programName, ".exe")+".LICENSE"] = read("LICENSE")
 		pluginPrograms[strings.TrimSuffix(programName, ".exe")+".NOTICES.txt"] = noticeBytes
+		jaName := strings.Replace(programName, "english-coach_", "japanese-coach_", 1)
+		jaDest := filepath.Join(tmp, jaName)
+		jaBuild := exec.Command("go", "build", "-trimpath", "-ldflags", "-s -w -X main.version="+version+" -X main.revision="+rev, "-o", jaDest, ".")
+		jaBuild.Dir = "languages/ja/runtime"
+		jaBuild.Env = cmd.Env
+		jaBuild.Stdout, jaBuild.Stderr = os.Stdout, os.Stderr
+		must(jaBuild.Run())
+		jaBytes := read(jaDest)
+		pluginPrograms[jaName] = jaBytes
+		pluginPrograms[jaName+".sha256"] = []byte(digest(jaBytes) + "\n")
 		if osName == "windows" {
 			name += ".zip"
 			z := zip.NewWriter(&packed)
