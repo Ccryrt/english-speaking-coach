@@ -1,8 +1,9 @@
-<!-- Keep release notes in English only. Chinese documentation belongs in README.md. -->
+# v1.1.0 — Continue learning across computers
 
-# v1.0.2 — Coaching accuracy
+- Add English and Japanese learning sync through a chosen iCloud Drive folder.
+- Restore existing progress on a fresh installation; check for updates before practice and publish completed saves automatically.
+- Keep immutable, verified snapshots and original local archives. Preserve divergent device histories instead of silently overwriting them.
+- Keep learning facts separate from account credentials, raw Voice caches and running jobs.
+- Include the guided progress/help micro-lesson and hard-filter Japanese topic selection.
 
-- Fix cases where an English answer could be accepted despite not matching the learner’s intended meaning.
-- Fix requests about missed earlier teaching being mistaken for a request to stop teaching; the coach now supplies the missing English help.
-- Improve post-session evidence so repeated model answers are not recorded as independently mastered language.
-- Improve Chinese translations to distinguish missed past teaching from future teaching preferences.
+Each computer needs the plugin and a one-time connection to the same downloaded sync folder. iCloud transfer is asynchronous; a local save does not prove delivery to another computer. Actual Voice delivery and physical two-device iCloud transfer remain separate acceptance checks.

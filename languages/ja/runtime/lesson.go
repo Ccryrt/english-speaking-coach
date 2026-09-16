@@ -119,5 +119,5 @@ func lessonCommand(root, day, action string, args M) M {
 		state["updated"] = now()
 		writeJSON(filepath.Join(root, "Practice", "progress-help.json"), state)
 	})
-	return lessonView(root, day)
+	return merge(lessonView(root, day), syncAfterSave(root))
 }
