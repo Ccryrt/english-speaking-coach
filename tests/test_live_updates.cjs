@@ -1,10 +1,15 @@
 // Synthetic caption controller: no microphone, archive writes or paid model calls.
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const apiPath=url=>{
+  const resolved=new URL(url,'http://127.0.0.1:8897/en/');
+  assert.ok(resolved.pathname.startsWith('/en/api/'),'Captions must use the selected language');
+  return resolved.pathname.slice(3)+resolved.search;
+};
 const elements=new Map(),timers=new Map();let observer,timerId=0,response,requests=[];
 const el=id=>{if(!elements.has(id))elements.set(id,{innerHTML:'',textContent:'',scrollTop:0,scrollHeight:3000,handlers:{},querySelectorAll:()=>[],classList:{toggle(){}},setAttribute(){},addEventListener(k,v){this.handlers[k]=v;}});return elements.get(id);};
 const ctx=vm.createContext({window:{},document:{querySelector:el},localStorage:{getItem(){return null},setItem(){}},location:{},Date,URLSearchParams,AbortController,console,
 ResizeObserver:class{constructor(fn){observer=fn}observe(){}disconnect(){}},
-setTimeout(fn){timers.set(++timerId,fn);return timerId},clearTimeout(id){timers.delete(id)},fetch:async(url,options)=>{requests.push({url,options});return {ok:true,json:async()=>response}}});
+setTimeout(fn){timers.set(++timerId,fn);return timerId},clearTimeout(id){timers.delete(id)},fetch:async(url,options)=>{requests.push({url:apiPath(url),options});return {ok:true,json:async()=>response}}});
 vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../assets/library/live.js'),'utf8'),ctx);
 const data=(total,status='pending',chinese='')=>({server_time:'2026-01-01T00:00:00Z',state:{id:'synthetic',status:'waiting_transcript',thread_id:'one',voice_id:'two'},history:[],total,counts:{pending:status==='pending'?1:0},items:[{seq:total,id:String(total),role:'user',text:'Synthetic line '+total,status,chinese}],page:2,pages:2});
 (async()=>{
@@ -46,7 +51,7 @@ response={...data(47),state:{...data(47).state,status:'ended',desired:'stopped'}
 el('#live-follow').handlers.click();await new Promise(r=>setImmediate(r));
 // Navigating during token lookup cannot retarget a retry to another Voice.
 let releaseStorage,posted;
-ctx.fetch=async(url,options)=>{if(url==='/api/storage')return await new Promise(resolve=>{releaseStorage=()=>resolve({ok:true,json:async()=>({open_token:'test-token'})})});posted=JSON.parse(options.body);return {ok:true,json:async()=>({status:'retry_requested'})}};
+ctx.fetch=async(url,options)=>{url=apiPath(url);if(url==='/api/storage')return await new Promise(resolve=>{releaseStorage=()=>resolve({ok:true,json:async()=>({open_token:'test-token'})})});posted=JSON.parse(options.body);return {ok:true,json:async()=>({status:'retry_requested'})}};
 const retryTask=el('#live-retry-translation').handlers.click();
 live.unmount();live.mount({...data(1),state:{...data(1).state,id:'another-run'}},{});
 releaseStorage();await retryTask;assert.equal(posted.run,'synthetic','Retry kept the clicked run');

@@ -20,7 +20,12 @@ function browser(hash, responder) {
   const context = vm.createContext({document,location,URLSearchParams,Date,console,AbortSignal,
     window:{addEventListener(){},scrollTo(){}},
     setTimeout(fn){timers.set(++timerId,fn);return timerId;},clearTimeout(id){timers.delete(id);},
-    async fetch(url,options){calls.push(url);return {ok:true,json:async()=>responder(url,options)};}});
+    async fetch(url,options){
+      const resolved=new URL(url,'http://127.0.0.1:8897/en/');
+      assert.ok(resolved.pathname.startsWith('/en/api/'),'Requests must stay in the selected language');
+      url=resolved.pathname.slice(3)+resolved.search;
+      calls.push(url);return {ok:true,json:async()=>responder(url,options)};
+    }});
   vm.runInContext(source,context);
   return {context,elements,calls,timers,redirects,location,document,
     async tick(){const [id,fn]=[...timers][0];timers.delete(id);await fn();await flush();}};
